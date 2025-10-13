@@ -8,5 +8,5 @@ public class CameraController(Camera camera)
     public void Update()
     {
         
-    }
+    } 
 }

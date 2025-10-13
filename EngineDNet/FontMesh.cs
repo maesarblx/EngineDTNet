@@ -1,4 +1,5 @@
-﻿using MadWorldNL.EarCut.Logic;
+﻿using EngineDNet;
+using MadWorldNL.EarCut.Logic;
 using OpenTK.Mathematics;
 using SixLabors.Fonts;
 using SixLabors.Fonts.Unicode;
@@ -56,11 +57,11 @@ public class FontMesh
 
         const float pointSize = 1f;
         const float dpi = 256f;
-        
+
         var font = family.CreateFont(pointSize, FontStyle.Regular);
         var options = new TextOptions(font) { Dpi = dpi };
         var glyphPaths = TextBuilder.GenerateGlyphs(TextGlyphs, options);
-        
+
         var i = 0;
         foreach (var glyphPath in glyphPaths)
         {

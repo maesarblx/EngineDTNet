@@ -23,7 +23,7 @@ namespace EngineDNet
             shader.SetUniform("lightDirection", lightingSettings.LightDirection.X, lightingSettings.LightDirection.Y, lightingSettings.LightDirection.Z);
             shader.SetUniform("ambientColor", lightingSettings.AmbientColor.X, lightingSettings.AmbientColor.Y, lightingSettings.AmbientColor.Z);
             shader.SetUniform("ambientIntensity", lightingSettings.AmbientIntensity);
-            shader.SetUniform("shadowsEnabled", lightingSettings.ShadowsEnabled ? 1 : 0);
+            shader.SetUniform("directionalLightEnabled", lightingSettings.DirectionalLightEnabled ? 1 : 0);
             GL.BindVertexArray(Object.Mesh.VAO);
             Object.Texture?.Bind(TextureUnit.Texture0);
             GL.DrawArrays(PrimitiveType.Triangles, 0, Object.Mesh.VerticesCount);

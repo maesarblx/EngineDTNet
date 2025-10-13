@@ -40,8 +40,13 @@ public static class Core
     private static string _textFragmentShaderPath = null!;
 
     private static Shader _shader = null!;
+    private static Shader _textShader = null!;
     private static Camera _camera = null!;
+    private static CameraController _cameraController = null!;
     private static Scene _curScene = null!;
+
+
+    private static Text2D _fpsText = null!;
 
     public static Random Rand = new Random();
     public static MonitorInfoData CurrentMonitor = MonitorUtils.GetAllMonitors()[0];
@@ -104,8 +109,22 @@ public static class Core
     private static void WindowOnLoad()
     {
         _shader = new Shader(File.ReadAllText(_vertexShaderPath), File.ReadAllText(_fragmentShaderPath));
+        _textShader = new Shader(File.ReadAllText(_textVertexShaderPath), File.ReadAllText(_textFragmentShaderPath));
         _camera = new Camera();
         _curScene = new Scene();
+        _cameraController = new CameraController(_camera);
+
+        Object2DRenderer.TextShader = _textShader;
+        var fontMesh = new FontMesh("fonts/Axiforma-Regular.ttf");
+
+        {
+            var tex = new Text2D(new Vector2(45.0f, 400.0f), Vector2.One, 0.0f, fontMesh)
+            {
+                Color = new Vector3(1.0f, 1.0f, 1.0f),
+                Text = "<FPS>",
+            };
+            _fpsText = tex;
+        }
 
         GL.ClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         GL.Enable(EnableCap.Multisample);
@@ -113,6 +132,14 @@ public static class Core
         GL.Enable(EnableCap.PolygonSmooth);
         GL.Hint(HintTarget.LineSmoothHint, HintMode.Nicest);
         GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Nicest);
+
+        Window.CursorState = CursorState.Grabbed;
+        Window.CenterWindow();
+
+        var TestMesh = new Mesh3D(MeshLoader.Load("models/makaka.obj"));
+        var TestTexture = new Texture2D("textures/makaka.png");
+        var TestObject = new GameObject("TestObject", Vector3.UnitY * 5, Vector3.Zero, Vector3.One, TestMesh, TestTexture);
+        TestObject.Parent = CurrentScene.Root;
     }
 
     private static void WindowOnRenderFrame(FrameEventArgs e)
@@ -121,19 +148,26 @@ public static class Core
 
         CurrentCamera.Aspect = (float)Window.Size.X / Window.Size.Y;
 
+        _cameraController.Update(Window.MouseState.Delta, (float)e.Time, Window.IsKeyDown(Keys.W), Window.IsKeyDown(Keys.A), Window.IsKeyDown(Keys.S), Window.IsKeyDown(Keys.D), Window.IsKeyDown(Keys.E), Window.IsKeyDown(Keys.Q));
+
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
         foreach (var v in CurrentScene.Root.Children)
         {
             GameObjectRenderer.Render(v, _shader, _camera, CurrentScene.SceneLightingSettings);
         }
+        Object2DRenderer.Render(_fpsText, _textShader, Window.ClientSize.X, Window.ClientSize.Y);
 
         Window.SwapBuffers();
     }
 
     private static void WindowOnUpdateFrame(FrameEventArgs e)
     {
-        
+        _fpsText.Text = $"FPS: {Math.Floor(1.0f / e.Time)}";
+        if (Window.IsKeyDown(Keys.Escape))
+        {
+            Window.Close();
+        }
     }
 
     private static void WindowOnResize(ResizeEventArgs e)

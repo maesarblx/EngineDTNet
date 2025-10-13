@@ -12,8 +12,8 @@ public class Camera()
     public float ZNear = 0.1f;
     public float ZFar = 1024;
 
-    public float Yaw = -90.0f;
-    public float Pitch = 0.0f;
+    public float Yaw = 0f;
+    public float Pitch = 0f;
 
     public Matrix4 GetViewMatrix()
     {

@@ -34,7 +34,7 @@ public class Mesh2D: IDisposable
         GL.BufferData(BufferTarget.ArrayBuffer, mesh.Length * Marshal.SizeOf<Vertex>(), mesh, BufferUsageHint.StaticDraw);
         
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, Ebo);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * Marshal.SizeOf<Vertex>(), indices, BufferUsageHint.StaticDraw);
+        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * Marshal.SizeOf<int>(), indices, BufferUsageHint.StaticDraw);
         
         // Vertex Position: float X, float Y
         GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, Marshal.SizeOf<Vertex>(), 0);

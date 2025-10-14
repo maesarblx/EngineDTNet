@@ -63,6 +63,6 @@ public class Mesh2D: IDisposable
     public void Dispose()
     {
         ReleaseUnmanagedResources(true);
-        //GC.SuppressFinalize(this);
+        GC.SuppressFinalize(this);
     }
 }

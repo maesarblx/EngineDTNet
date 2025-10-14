@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+using System.Numerics;
+//using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -28,14 +29,13 @@ public static class Core
     private static CameraController _cameraController = null!;
     private static Scene _curScene = null!;
 
-
     private static Text2D _fpsText = null!;
 
     public static Random Rand = new();
     public static MonitorInfoData CurrentMonitor = MonitorUtils.GetAllMonitors()[0];
     public static float ElapsedTime = 0f;
 
-    public static Vector2i WindowSize
+    public static OpenTK.Mathematics.Vector2i WindowSize
     {
         get => Window.Size;
         set => Window.Size = value;
@@ -145,7 +145,7 @@ public static class Core
 
         CurrentCamera.Aspect = (float)Window.Size.X / Window.Size.Y;
 
-        _cameraController.Update(Window.MouseState.Delta, (float)e.Time, Window.IsKeyDown(Keys.W), Window.IsKeyDown(Keys.A), Window.IsKeyDown(Keys.S), Window.IsKeyDown(Keys.D), Window.IsKeyDown(Keys.E), Window.IsKeyDown(Keys.Q));
+        _cameraController.Update((Vector2)Window.MouseState.Delta, (float)e.Time, Window.IsKeyDown(Keys.W), Window.IsKeyDown(Keys.A), Window.IsKeyDown(Keys.S), Window.IsKeyDown(Keys.D), Window.IsKeyDown(Keys.E), Window.IsKeyDown(Keys.Q));
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 

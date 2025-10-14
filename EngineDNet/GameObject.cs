@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Numerics;
+//using OpenTK.Mathematics;
 
 namespace EngineDNet
 {
@@ -39,9 +40,9 @@ namespace EngineDNet
             Children.Add(child);
         }
 
-        public Matrix4 GetModelMatrix()
+        public Matrix4x4 GetModelMatrix()
         {
-            return Matrix4.CreateScale(Size) * Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationX(Rotation.X) * Matrix4.CreateRotationZ(Rotation.Z) * Matrix4.CreateTranslation(Position);
+            return Matrix4x4.CreateScale(Size) * Matrix4x4.CreateRotationY(Rotation.Y) * Matrix4x4.CreateRotationX(Rotation.X) * Matrix4x4.CreateRotationZ(Rotation.Z) * Matrix4x4.CreateTranslation(Position);
         }
     }
 }

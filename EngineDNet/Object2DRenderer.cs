@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+using System.Numerics;
+//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 
@@ -13,11 +14,11 @@ public static class Object2DRenderer
         shader.Use();
         GL.Disable(EnableCap.DepthTest);
         GL.Disable(EnableCap.CullFace);
-        var projection = Matrix4.CreateOrthographicOffCenter(0.0f, screenWidth, screenHeight, 0.0f, -1.0f, 1.0f);
+        var projection = Matrix4x4.CreateOrthographicOffCenter(0.0f, screenWidth, screenHeight, 0.0f, -1.0f, 1.0f);
         var size = objectMesh2d.Size;
-        var model = Matrix4.CreateScale(new Vector3(size.X, size.Y, 1.0f))
-                    * Matrix4.CreateRotationZ(MathHelper.DegToRad * objectMesh2d.Rotation)
-                    * Matrix4.CreateTranslation(new Vector3(objectMesh2d.Position));
+        var model = Matrix4x4.CreateScale(new Vector3(size.X, size.Y, 1.0f))
+                    * Matrix4x4.CreateRotationZ(Utils.DegToRad * objectMesh2d.Rotation)
+                    * Matrix4x4.CreateTranslation((Vector3.UnitX * objectMesh2d.Position.X) + (Vector3.UnitY * objectMesh2d.Position.Y));
         shader.SetUniform("projection", projection);
         shader.SetUniform("model", model);
         shader.SetUniform("color", objectMesh2d.Color);

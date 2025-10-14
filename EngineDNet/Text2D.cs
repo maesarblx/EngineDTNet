@@ -1,5 +1,5 @@
-﻿using OpenTK.Mathematics;
-
+﻿using System.Numerics;
+//using OpenTK.Mathematics;
 namespace EngineDNet;
 
 public class Text2D(Vector2 position, Vector2 size, float rotation, FontMesh fontMesh): Object2DMesh(position, size, rotation)

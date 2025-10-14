@@ -1,6 +1,7 @@
 ﻿namespace EngineDNet;
 public static class Utils
 {
+    public const float DegToRad = (float)Math.PI / 180f;
     public static float Rad(float x)
     {
         return x * ((float) Math.PI / 180f);

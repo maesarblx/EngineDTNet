@@ -1,13 +1,14 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+using System.Numerics;
+//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 
 public static class TextRenderer
 {
-    public static void Render(string text, FontMesh fontMesh, Shader shader, Matrix4 baseMatrix, float fontSize, Vector3 color)
+    public static void Render(string text, FontMesh fontMesh, Shader shader, Matrix4x4 baseMatrix, float fontSize, Vector3 color)
     {
-        var model = Matrix4.Identity;
+        var model = Matrix4x4.Identity;
         var offset = Vector3.Zero;
         foreach (var t in text)
         {
@@ -15,11 +16,11 @@ public static class TextRenderer
             {
                 case ' ':
                     offset += Vector3.UnitX;
-                    model = Matrix4.CreateTranslation(offset);
+                    model = Matrix4x4.CreateTranslation(offset);
                     continue;
                 case '\n':
                     offset = new Vector3(0.0f, offset.Y + 3.0f, 0.0f);
-                    model = Matrix4.CreateTranslation(offset);
+                    model = Matrix4x4.CreateTranslation(offset);
                     continue;
             }
 
@@ -28,9 +29,9 @@ public static class TextRenderer
             if (mesh == null) continue;
             shader.Use();
             shader.SetUniform("color", color);
-            shader.SetUniform("model", model * Matrix4.CreateScale(fontSize) * baseMatrix);
+            shader.SetUniform("model", model * Matrix4x4.CreateScale(fontSize) * baseMatrix);
             offset += Vector3.UnitX * character.Advance;
-            model = Matrix4.CreateTranslation(offset);
+            model = Matrix4x4.CreateTranslation(offset);
             GL.Disable(EnableCap.DepthTest);
             GL.Disable(EnableCap.CullFace);
             GL.BindVertexArray(mesh.Vao);

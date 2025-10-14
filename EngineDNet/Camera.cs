@@ -1,4 +1,5 @@
-﻿using OpenTK.Mathematics;
+﻿using System.Numerics;
+//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 
@@ -15,19 +16,19 @@ public class Camera()
     public float Yaw = 0f;
     public float Pitch = 0f;
 
-    public Matrix4 GetViewMatrix()
+    public Matrix4x4 GetViewMatrix()
     {
-        return Matrix4.CreateTranslation(-Position) * GetRotationMatrix();
+        return Matrix4x4.CreateTranslation(-Position) * GetRotationMatrix();
     }
 
-    public Matrix4 GetProjectionMatrix()
+    public Matrix4x4 GetProjectionMatrix()
     {
-        return Matrix4.CreatePerspectiveFieldOfView(Utils.Rad(FOV), Aspect, ZNear, ZFar);
+        return Matrix4x4.CreatePerspectiveFieldOfView(Utils.Rad(FOV), Aspect, ZNear, ZFar);
     }
 
-    public Matrix4 GetRotationMatrix()
+    public Matrix4x4 GetRotationMatrix()
     {
-        return Matrix4.CreateRotationY(Rotation.Y) * Matrix4.CreateRotationX(Rotation.X)  * Matrix4.CreateRotationZ(Rotation.Z);
+        return Matrix4x4.CreateRotationY(Rotation.Y) * Matrix4x4.CreateRotationX(Rotation.X)  * Matrix4x4.CreateRotationZ(Rotation.Z);
     }
 
     public Vector3 GetFrontVector()

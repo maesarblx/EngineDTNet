@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+using System.Numerics;
+//using OpenTK.Mathematics;
 
 namespace EngineDNet
 {
@@ -10,9 +11,9 @@ namespace EngineDNet
             if (Object.Mesh == null) return;
             shader.Use();
 
-            Matrix4 Model = Object.GetModelMatrix();
-            Matrix4 ViewMatrix = camera.GetViewMatrix();
-            Matrix4 ProjMatrix = camera.GetProjectionMatrix();
+            Matrix4x4 Model = Object.GetModelMatrix();
+            Matrix4x4 ViewMatrix = camera.GetViewMatrix();
+            Matrix4x4 ProjMatrix = camera.GetProjectionMatrix();
 
             shader.SetUniform("Model", Model);
             shader.SetUniform("ViewMatrix", ViewMatrix);

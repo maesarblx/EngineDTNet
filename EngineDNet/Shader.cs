@@ -1,5 +1,6 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
+using System.Numerics;
+//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 
@@ -24,7 +25,10 @@ public class Shader: IDisposable
         throw new Exception($"Failed to compile shader: {info}");
     }
 
-    public void SetUniform(string name, Matrix4 matrix4) => GL.ProgramUniformMatrix4(ProgramId, GL.GetUniformLocation(ProgramId, name), false, ref matrix4);
+    public void SetUniform(string name, Matrix4x4 matrix4) {
+        var matrix4Num = (OpenTK.Mathematics.Matrix4)matrix4;
+        GL.ProgramUniformMatrix4(ProgramId, GL.GetUniformLocation(ProgramId, name), false, ref matrix4Num);
+    }
     public void SetUniform(string name, int x) => GL.ProgramUniform1(ProgramId, GL.GetUniformLocation(ProgramId, name), x);
     public void SetUniform(string name, int x, int y) => GL.ProgramUniform2(ProgramId, GL.GetUniformLocation(ProgramId, name), x, y);
     public void SetUniform(string name, int x, int y, int z) => GL.ProgramUniform3(ProgramId, GL.GetUniformLocation(ProgramId, name), x, y, z);
@@ -33,10 +37,22 @@ public class Shader: IDisposable
     public void SetUniform(string name, float x, float y) => GL.ProgramUniform2(ProgramId, GL.GetUniformLocation(ProgramId, name), x, y);
     public void SetUniform(string name, float x, float y, float z) => GL.ProgramUniform3(ProgramId, GL.GetUniformLocation(ProgramId, name), x, y, z);
     public void SetUniform(string name, float x, float y, float z, float w) => GL.ProgramUniform4(ProgramId, GL.GetUniformLocation(ProgramId, name), x, y, z, w);
-    
-    public void SetUniform(string name, Vector2 vector) => GL.ProgramUniform2(ProgramId, GL.GetUniformLocation(ProgramId, name), vector);
-    public void SetUniform(string name, Vector3 vector) => GL.ProgramUniform3(ProgramId, GL.GetUniformLocation(ProgramId, name), vector);
-    public void SetUniform(string name, Vector4 vector) => GL.ProgramUniform4(ProgramId, GL.GetUniformLocation(ProgramId, name), vector);
+
+    public void SetUniform(string name, Vector2 vector)
+    {
+        var vectorNum = (OpenTK.Mathematics.Vector2)vector;
+        GL.ProgramUniform2(ProgramId, GL.GetUniformLocation(ProgramId, name), vectorNum);
+    }
+    public void SetUniform(string name, Vector3 vector)
+    {
+        var vectorNum = (OpenTK.Mathematics.Vector3)vector;
+        GL.ProgramUniform3(ProgramId, GL.GetUniformLocation(ProgramId, name), vectorNum);
+    }
+    public void SetUniform(string name, Vector4 vector)
+    {
+        var vectorNum = (OpenTK.Mathematics.Vector4)vector;
+        GL.ProgramUniform4(ProgramId, GL.GetUniformLocation(ProgramId, name), vectorNum);
+    }
     
     public Shader(string vertexSource, string fragmentSource)
     {

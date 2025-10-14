@@ -1,5 +1,7 @@
-using System.Text.Json;
+using BepuPhysics;
+using BepuPhysics.Collidables;
 using System.Numerics;
+using System.Text.Json;
 //using OpenTK.Mathematics;
 
 namespace EngineDNet;
@@ -8,6 +10,7 @@ public class MapObject
 {
     public string Texture { get; set; } = "";
     public string Mesh { get; set; } = "";
+    public bool PhysicsEnabled { get; set; } = false;
     public float[] Position { get; set; } = new float[3];
     public float[] Rotation { get; set; } = new float[3];
     public float[] Scale { get; set; } = new float[3];
@@ -34,6 +37,9 @@ public static class MapLoader
             var rotation = new Vector3(Utils.Rad(obj.Rotation[0]), Utils.Rad(obj.Rotation[1]), Utils.Rad(obj.Rotation[2]));
             var scale = new Vector3(obj.Scale[0], obj.Scale[1], obj.Scale[2]);
             var gameObject = new GameObject(name, position, rotation, scale, mesh, texture);
+            mesh.Size = scale;
+            gameObject.PhysicsEnabled = obj.PhysicsEnabled;
+            gameObject.InitializePhysics();
             Utils.ColoredWriteLine($"[MapLoader] Loaded object: {name}", ConsoleColor.Magenta);
             result.Add(gameObject);
         }

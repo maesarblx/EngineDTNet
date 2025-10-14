@@ -148,7 +148,7 @@ public static class Core
         _cameraController.Update((Vector2)Window.MouseState.Delta, (float)e.Time, Window.IsKeyDown(Keys.W), Window.IsKeyDown(Keys.A), Window.IsKeyDown(Keys.S), Window.IsKeyDown(Keys.D), Window.IsKeyDown(Keys.E), Window.IsKeyDown(Keys.Q));
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-
+        CurrentScene.Update((float)e.Time);
         foreach (var v in CurrentScene.Root.Children)
         {
             GameObjectRenderer.Render(v, _shader, _camera, CurrentScene.SceneLightingSettings);

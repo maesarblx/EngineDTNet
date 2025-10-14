@@ -5,15 +5,15 @@ namespace EngineDNet;
 
 public class Camera()
 {
-    public Vector3 Position = Vector3.UnitZ * 3;
-    public Vector3 Rotation = -Vector3.UnitZ;
+    public Vector3 Position = Vector3.UnitY * 2;
+    public Vector3 Rotation = Vector3.Zero;
 
     public float FOV = 70;
     public float Aspect = 2f;
     public float ZNear = 0.1f;
     public float ZFar = 1024;
 
-    public float Yaw = 0f;
+    public float Yaw = 90f;
     public float Pitch = 0f;
 
     public Matrix4x4 GetViewMatrix()

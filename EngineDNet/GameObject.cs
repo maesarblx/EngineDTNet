@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using BepuPhysics;
+using BepuPhysics.Collidables;
+using System.Numerics;
 //using OpenTK.Mathematics;
 
 namespace EngineDNet
@@ -22,6 +24,9 @@ namespace EngineDNet
             }
         }
         public List<GameObject> Children = new List<GameObject>();
+        public BodyHandle? PhysicsHandle { get; set; }
+        public StaticHandle? StaticPhysicsHandle { get; set; }
+        public bool PhysicsEnabled { get; set; } = false;
 
         public GameObject(string name, Vector3 position, Vector3 rotation, Vector3 size, Mesh3D? mesh = null, Texture2D? texture = null, GameObject? parent = null)
         {
@@ -32,6 +37,30 @@ namespace EngineDNet
             Mesh = mesh;
             Texture = texture;
             Parent = parent;
+        }
+
+        public void InitializePhysics()
+        {
+            if (Mesh == null)
+            {
+                Utils.ColoredWriteLine($"[GameObject] Cannot initialize physics for {Name} because it has no mesh!", ConsoleColor.Yellow);
+                return;
+            }
+            var boxSize = Mesh.GetBoundingSize();
+            var boxShape = new Box(boxSize.X, boxSize.Y, boxSize.Z); // размеры
+            var boxInertia = boxShape.ComputeInertia(1f); // масса = 1
+            var shapeHandle = Core.CurrentScene.Simulation.Shapes.Add(boxShape);
+            var bodyDescription = BodyDescription.CreateDynamic(Position, boxInertia, shapeHandle, 0.01f);
+
+            if (PhysicsEnabled)
+            {
+                PhysicsHandle = Core.CurrentScene.Simulation.Bodies.Add(bodyDescription);
+            }
+            else
+            {
+                StaticPhysicsHandle = Core.CurrentScene.Simulation.Statics.Add(new StaticDescription(Position, shapeHandle));
+            }
+
         }
 
         public void AddChild(GameObject child)

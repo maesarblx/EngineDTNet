@@ -1,5 +1,4 @@
 ﻿using OpenTK.Mathematics;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace EngineDNet;
 public class CameraController(Camera camera)

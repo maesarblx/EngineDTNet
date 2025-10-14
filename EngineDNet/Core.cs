@@ -1,27 +1,8 @@
-﻿using OpenTK;
-using OpenTK.Audio;
-using OpenTK.Compute;
-using OpenTK.Core;
-using OpenTK.Graphics;
-using OpenTK.Graphics.OpenGL4;
-using OpenTK.Input;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using OpenTK.Platform;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection.Metadata;
-using System.Runtime.InteropServices;
-using System.Timers;
-using System.Drawing;
-using EngineDNet;
-using System.Text.Json.Serialization;
-using System.Text.Json;
 
 namespace EngineDNet;
 

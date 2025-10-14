@@ -20,6 +20,8 @@ using System.Runtime.InteropServices;
 using System.Timers;
 using System.Drawing;
 using EngineDNet;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
 namespace EngineDNet;
 
@@ -48,7 +50,7 @@ public static class Core
 
     private static Text2D _fpsText = null!;
 
-    public static Random Rand = new Random();
+    public static Random Rand = new();
     public static MonitorInfoData CurrentMonitor = MonitorUtils.GetAllMonitors()[0];
     public static float ElapsedTime = 0f;
 
@@ -106,13 +108,25 @@ public static class Core
         set => Window.VSync = value;
     }
 
+    public static GameObject LoadObject(string Name, Vector3 Position, Vector3 Rotation, Vector3 Scale)
+    {
+        var Mesh = new Mesh3D(MeshLoader.Load($"models/{Name}.obj"));
+        var Texture = new Texture2D($"textures/{Name}.png");
+        var Object = new GameObject(Name, Position, Rotation, Scale, Mesh, Texture);
+
+        return Object;
+    }
+
+
     private static void WindowOnLoad()
     {
-        _shader = new Shader(File.ReadAllText(_vertexShaderPath), File.ReadAllText(_fragmentShaderPath));
-        _textShader = new Shader(File.ReadAllText(_textVertexShaderPath), File.ReadAllText(_textFragmentShaderPath));
-        _camera = new Camera();
-        _curScene = new Scene();
-        _cameraController = new CameraController(_camera);
+        var MapName = "Testplate";
+
+        _shader = new(File.ReadAllText(_vertexShaderPath), File.ReadAllText(_fragmentShaderPath));
+        _textShader = new(File.ReadAllText(_textVertexShaderPath), File.ReadAllText(_textFragmentShaderPath));
+        _camera = new();
+        _curScene = new();
+        _cameraController = new(_camera);
 
         Object2DRenderer.TextShader = _textShader;
         var fontMesh = new FontMesh("fonts/Axiforma-Regular.ttf");
@@ -136,10 +150,12 @@ public static class Core
         Window.CursorState = CursorState.Grabbed;
         Window.CenterWindow();
 
-        var TestMesh = new Mesh3D(MeshLoader.Load("models/makaka.obj"));
-        var TestTexture = new Texture2D("textures/makaka.png");
-        var TestObject = new GameObject("TestObject", Vector3.UnitY * 5, Vector3.Zero, Vector3.One, TestMesh, TestTexture);
-        TestObject.Parent = CurrentScene.Root;
+        var mapJsonRaw = File.ReadAllText($"maps/{MapName}.json");
+        var objects = MapLoader.Load(mapJsonRaw);
+        foreach (var obj in objects)
+        {
+            Core.CurrentScene.Root.AddChild(obj);
+        }
     }
 
     private static void WindowOnRenderFrame(FrameEventArgs e)

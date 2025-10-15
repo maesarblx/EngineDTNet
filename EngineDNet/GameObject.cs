@@ -1,7 +1,6 @@
 ﻿using BepuPhysics;
 using BepuPhysics.Collidables;
 using System.Numerics;
-//using OpenTK.Mathematics;
 
 namespace EngineDNet
 {
@@ -23,7 +22,7 @@ namespace EngineDNet
                 value?.Children.Add(this);
             }
         }
-        public List<GameObject> Children = new List<GameObject>();
+        public List<GameObject> Children = new();
         public BodyHandle? PhysicsHandle { get; set; }
         public StaticHandle? StaticPhysicsHandle { get; set; }
         public bool PhysicsEnabled { get; set; } = false;

@@ -1,9 +1,13 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using System.Numerics;
-//using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
+using System.Numerics;
+using System.Runtime.InteropServices;
 
 namespace EngineDNet;
 
@@ -13,7 +17,8 @@ public static class Core
         GameWindowSettings.Default,
         new NativeWindowSettings()
         {
-            NumberOfSamples = 4
+            NumberOfSamples = 4,
+            Icon = CreateWindowIcon("./EngineDNet.png")
         }
     );
 
@@ -98,6 +103,18 @@ public static class Core
         return Object;
     }
 
+    public static WindowIcon CreateWindowIcon(string imagePath)
+    {
+        var image = SixLabors.ImageSharp.Image.Load<Rgba32>(imagePath);
+
+        image.Mutate(x => x.Flip(FlipMode.Vertical));
+
+        var pixels = new byte[4 * image.Width * image.Height];
+        image.CopyPixelDataTo(pixels);
+
+        var windowIcon = new WindowIcon(new OpenTK.Windowing.Common.Input.Image(image.Width, image.Height, pixels));
+        return windowIcon;
+    }
 
     private static void WindowOnLoad()
     {

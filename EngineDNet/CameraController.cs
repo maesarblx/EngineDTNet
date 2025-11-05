@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 public class CameraController(Camera camera)
@@ -13,7 +12,7 @@ public class CameraController(Camera camera)
 
     public float FreeSpeed = 10f;
 
-    public void Update(Vector2 mouseDelta, float deltaTime, bool W, bool A, bool S, bool D, bool E, bool Q)
+    public void Update(Vector2 mouseDelta, float deltaTime)
     {
         Camera.Pitch += mouseDelta.Y * Sensitivity;
         Camera.Yaw += mouseDelta.X * Sensitivity;
@@ -21,33 +20,7 @@ public class CameraController(Camera camera)
         Camera.Pitch = Utils.Clamp(Camera.Pitch, MinPitch, MaxPitch);
 
         Camera.Rotation = new Vector3(Utils.Rad(Camera.Pitch), Utils.Rad(Camera.Yaw), 0);
-
-        var Move = Vector3.Zero;
-        if (W)
-        {
-            Move -= Camera.GetFrontVector();
-        }
-        if (A)
-        {
-            Move += Camera.GetRightVector();
-        }
-        if (S)
-        {
-            Move += Camera.GetFrontVector();
-        }
-        if (D)
-        {
-            Move -= Camera.GetRightVector();
-        }
-        if (E)
-        {
-            Move += Vector3.UnitY;
-        }
-        if (Q)
-        {
-            Move -= Vector3.UnitY;
-        }
-        Move *= FreeSpeed * deltaTime;
-        Camera.Position += Move;
+        if (Core.CurrentPlayer != null)
+            Camera.Position = Core.CurrentPlayer.Position + (Vector3.UnitY * (Core.CurrentPlayer.Height * 0.5f));
     }
 }

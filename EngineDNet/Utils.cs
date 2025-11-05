@@ -1,7 +1,10 @@
-﻿namespace EngineDNet;
+﻿using System.Numerics;
+
+namespace EngineDNet;
 public static class Utils
 {
     public const float DegToRad = (float)Math.PI / 180f;
+    public static Vector3 FlatXZ = Vector3.UnitX + Vector3.UnitZ;
     public static float Rad(float x)
     {
         return x * ((float) Math.PI / 180f);

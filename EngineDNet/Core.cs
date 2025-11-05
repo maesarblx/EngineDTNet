@@ -17,8 +17,7 @@ public static class Core
         GameWindowSettings.Default,
         new NativeWindowSettings()
         {
-            NumberOfSamples = 4,
-            Icon = CreateWindowIcon("./EngineDNet.png")
+            NumberOfSamples = 0,
         }
     );
 
@@ -39,6 +38,8 @@ public static class Core
     public static Random Rand = new();
     public static MonitorInfoData CurrentMonitor = MonitorUtils.GetAllMonitors()[0];
     public static float ElapsedTime = 0f;
+
+    public static Player? CurrentPlayer;
 
     public static OpenTK.Mathematics.Vector2i WindowSize
     {
@@ -103,17 +104,14 @@ public static class Core
         return Object;
     }
 
-    public static WindowIcon CreateWindowIcon(string imagePath)
+    public static bool IsKeyDown(Keys Key)
     {
-        var image = SixLabors.ImageSharp.Image.Load<Rgba32>(imagePath);
+        return Window.IsKeyDown(Key);
+    }
 
-        image.Mutate(x => x.Flip(FlipMode.Vertical));
-
-        var pixels = new byte[4 * image.Width * image.Height];
-        image.CopyPixelDataTo(pixels);
-
-        var windowIcon = new WindowIcon(new OpenTK.Windowing.Common.Input.Image(image.Width, image.Height, pixels));
-        return windowIcon;
+    public static bool IsKeyPressed(Keys Key)
+    {
+        return Window.IsKeyPressed(Key);
     }
 
     private static void WindowOnLoad()
@@ -125,6 +123,7 @@ public static class Core
         _camera = new();
         _curScene = new();
         _cameraController = new(_camera);
+        CurrentPlayer = new();
 
         Object2DRenderer.TextShader = _textShader;
         var fontMesh = new FontMesh("fonts/Axiforma-Regular.ttf");
@@ -152,7 +151,7 @@ public static class Core
         var objects = MapLoader.Load(mapJsonRaw);
         foreach (var obj in objects)
         {
-            Core.CurrentScene.Root.AddChild(obj);
+           CurrentScene.Root.AddChild(obj);
         }
     }
 
@@ -162,7 +161,10 @@ public static class Core
 
         CurrentCamera.Aspect = (float)Window.Size.X / Window.Size.Y;
 
-        _cameraController.Update((Vector2)Window.MouseState.Delta, (float)e.Time, Window.IsKeyDown(Keys.W), Window.IsKeyDown(Keys.A), Window.IsKeyDown(Keys.S), Window.IsKeyDown(Keys.D), Window.IsKeyDown(Keys.E), Window.IsKeyDown(Keys.Q));
+        CurrentPlayer?.ProcessInput();
+        CurrentPlayer?.Update((float)e.Time);
+
+        _cameraController.Update((Vector2)Window.MouseState.Delta, (float)e.Time);
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         CurrentScene.Update((float)e.Time);
@@ -171,7 +173,6 @@ public static class Core
             GameObjectRenderer.Render(v, _shader, _camera, CurrentScene.SceneLightingSettings);
         }
         Object2DRenderer.Render(_fpsText, _textShader, Window.ClientSize.X, Window.ClientSize.Y);
-
         Window.SwapBuffers();
     }
 

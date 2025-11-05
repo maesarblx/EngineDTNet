@@ -2,6 +2,7 @@
 using BepuPhysics.Collidables;
 using BepuPhysics.CollisionDetection;
 using BepuPhysics.Constraints;
+using BepuPhysics.Trees;
 using BepuUtilities;
 using BepuUtilities.Memory;
 using System.Numerics;
@@ -105,6 +106,52 @@ public struct SimpleNarrowPhaseCallbacks : INarrowPhaseCallbacks
     }
 }
 
+public struct SimpleRayHitHandler : IRayHitHandler
+{
+    public bool Hit;
+    public float T;
+    public Vector3 Normal;
+    public CollidableReference Collidable;
+    public int ChildIndex;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Reset()
+    {
+        Hit = false;
+        T = float.MaxValue;
+        Normal = Vector3.Zero;
+        Collidable = default;
+        ChildIndex = -1;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool AllowTest(CollidableReference collidable)
+    {
+        return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public bool AllowTest(CollidableReference collidable, int childIndex)
+    {
+        return true;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void OnRayHit(in RayData ray, ref float maximumT, float t, in Vector3 normal, CollidableReference collidable, int childIndex)
+    {
+        if (t < T)
+        {
+            maximumT = t;
+
+            Hit = true;
+            T = t;
+            Normal = normal;
+            Collidable = collidable;
+            ChildIndex = childIndex;
+        }
+    }
+}
+
 public class Scene
 {
     public GameObject Root { get; private set; }
@@ -120,6 +167,7 @@ public class Scene
         Root = new("Root", Vector3.Zero, Vector3.Zero, Vector3.One);
         Simulation = Simulation.Create(BufferPool, NarrowPhase, PoseIntegrator, SolveDescription);
     }
+
     public void Update(float deltaTime)
     {
         Simulation.Timestep(deltaTime, ThreadDispatcher);
@@ -135,6 +183,5 @@ public class Scene
                 obj.Rotation = new Vector3(rot.X, rot.Y, rot.Z);
             }
         }
-
     }
 }

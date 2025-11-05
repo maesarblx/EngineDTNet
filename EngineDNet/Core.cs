@@ -95,13 +95,13 @@ public static class Core
         set => Window.VSync = value;
     }
 
-    public static GameObject LoadObject(string Name, Vector3 Position, Vector3 Rotation, Vector3 Scale)
+    public static GameObject LoadObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, GameObject parent, float mass)
     {
-        var Mesh = new Mesh3D(MeshLoader.Load($"models/{Name}.obj"));
-        var Texture = new Texture2D($"textures/{Name}.png");
-        var Object = new GameObject(Name, Position, Rotation, Scale, Mesh, Texture);
+        var mesh = new Mesh3D(MeshLoader.Load($"models/{name}.obj"));
+        var texture = new Texture2D($"textures/{name}.png");
+        var gameObject = new GameObject(name, position, rotation, scale, mesh, texture, parent, mass);
 
-        return Object;
+        return gameObject;
     }
 
     public static bool IsKeyDown(Keys Key)
@@ -151,7 +151,8 @@ public static class Core
         var objects = MapLoader.Load(mapJsonRaw);
         foreach (var obj in objects)
         {
-           CurrentScene.Root.AddChild(obj);
+            //obj.Parent = CurrentScene.Root;
+            CurrentScene.Root.Children.Add(obj);
         }
     }
 
@@ -162,7 +163,6 @@ public static class Core
         CurrentCamera.Aspect = (float)Window.Size.X / Window.Size.Y;
 
         CurrentPlayer?.ProcessInput();
-        CurrentPlayer?.Update((float)e.Time);
 
         _cameraController.Update((Vector2)Window.MouseState.Delta, (float)e.Time);
 
@@ -178,6 +178,7 @@ public static class Core
 
     private static void WindowOnUpdateFrame(FrameEventArgs e)
     {
+        CurrentPlayer?.FixedUpdate((float)e.Time);
         _fpsText.Text = $"FPS: {Math.Floor(1.0f / e.Time)}";
         if (Window.IsKeyDown(Keys.Escape))
         {

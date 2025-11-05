@@ -113,6 +113,12 @@ public struct SimpleRayHitHandler : IRayHitHandler
     public Vector3 Normal;
     public CollidableReference Collidable;
     public int ChildIndex;
+    public List<int> Ignored;
+
+    public SimpleRayHitHandler()
+    {
+        Ignored = new();
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Reset()
@@ -124,25 +130,19 @@ public struct SimpleRayHitHandler : IRayHitHandler
         ChildIndex = -1;
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+
     public bool AllowTest(CollidableReference collidable)
     {
-        return true;
+        return !Ignored.Contains(collidable.BodyHandle.Value);
     }
+    public bool AllowTest(CollidableReference collidable, int childIndex) => AllowTest(collidable);
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public bool AllowTest(CollidableReference collidable, int childIndex)
-    {
-        return true;
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void OnRayHit(in RayData ray, ref float maximumT, float t, in Vector3 normal, CollidableReference collidable, int childIndex)
     {
-        if (t < T)
+        if (t <= T)
         {
-            maximumT = t;
-
             Hit = true;
             T = t;
             Normal = normal;

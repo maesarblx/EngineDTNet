@@ -10,6 +10,7 @@ namespace EngineDNet
         public Vector3 Rotation = Vector3.Zero;
         public Vector3 Size = Vector3.Zero;
         public string Name = "GameObject";
+        public float Mass = 1;
         public Mesh3D? Mesh;
         public Texture2D? Texture;
         private GameObject? _parent;
@@ -27,7 +28,7 @@ namespace EngineDNet
         public StaticHandle? StaticPhysicsHandle { get; set; }
         public bool PhysicsEnabled { get; set; } = false;
 
-        public GameObject(string name, Vector3 position, Vector3 rotation, Vector3 size, Mesh3D? mesh = null, Texture2D? texture = null, GameObject? parent = null)
+        public GameObject(string name, Vector3 position, Vector3 rotation, Vector3 size, Mesh3D? mesh = null, Texture2D? texture = null, GameObject? parent = null, float mass = 1)
         {
             Name = name;
             Position = position;
@@ -36,6 +37,7 @@ namespace EngineDNet
             Mesh = mesh;
             Texture = texture;
             Parent = parent;
+            Mass = mass;
         }
 
         public void InitializePhysics()
@@ -47,7 +49,7 @@ namespace EngineDNet
             }
             var boxSize = Mesh.GetBoundingSize();
             var boxShape = new Box(boxSize.X, boxSize.Y, boxSize.Z); // размеры
-            var boxInertia = boxShape.ComputeInertia(1f); // масса = 1
+            var boxInertia = boxShape.ComputeInertia(Mass);
             var shapeHandle = Core.CurrentScene.Simulation.Shapes.Add(boxShape);
             var bodyDescription = BodyDescription.CreateDynamic(Position, boxInertia, shapeHandle, 0.01f);
 

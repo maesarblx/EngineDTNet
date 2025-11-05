@@ -113,11 +113,13 @@ public struct SimpleRayHitHandler : IRayHitHandler
     public Vector3 Normal;
     public CollidableReference Collidable;
     public int ChildIndex;
-    public List<int> Ignored;
+    public List<BodyHandle> SIgnored;
+    public List<BodyHandle> DIgnored;
 
     public SimpleRayHitHandler()
     {
-        Ignored = new();
+        DIgnored = new();
+        SIgnored = new();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -133,8 +135,13 @@ public struct SimpleRayHitHandler : IRayHitHandler
 
     public bool AllowTest(CollidableReference collidable)
     {
-        return !Ignored.Contains(collidable.BodyHandle.Value);
+        if (collidable.Mobility == CollidableMobility.Dynamic)
+            return !DIgnored.Contains(collidable.BodyHandle);
+        if (collidable.Mobility == CollidableMobility.Static)
+            return !SIgnored.Contains(collidable.BodyHandle);
+        return true;
     }
+
     public bool AllowTest(CollidableReference collidable, int childIndex) => AllowTest(collidable);
 
 

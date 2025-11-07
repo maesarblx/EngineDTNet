@@ -1,5 +1,4 @@
 ﻿using System.Numerics;
-//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 public static class MeshLoader
@@ -32,7 +31,6 @@ public static class MeshLoader
                             float.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture),
                             float.Parse(parts[3], System.Globalization.CultureInfo.InvariantCulture)
                         ));
-                        //Utils.ColoredWriteLine($"[OBJ Loader] Case V loaded!", ConsoleColor.Green);
                         break;
 
                     case "vt":
@@ -40,7 +38,6 @@ public static class MeshLoader
                             float.Parse(parts[1], System.Globalization.CultureInfo.InvariantCulture),
                             float.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture)
                         ));
-                        //Utils.ColoredWriteLine($"[OBJ Loader] Case VT loaded!", ConsoleColor.Green);
                         break;
 
                     case "vn":
@@ -49,17 +46,13 @@ public static class MeshLoader
                             float.Parse(parts[2], System.Globalization.CultureInfo.InvariantCulture),
                             float.Parse(parts[3], System.Globalization.CultureInfo.InvariantCulture)
                         ));
-                        //Utils.ColoredWriteLine($"[OBJ Loader] Case VN loaded!", ConsoleColor.Green);
                         break;
 
                     case "f":
                         int vertexCount = parts.Length - 1;
 
                         if (vertexCount < 3)
-                        {
-                            //Utils.ColoredWriteLine($"[OBJ Loader] Error: Too few vertices in boundary ({vertexCount}). Skipped.", ConsoleColor.Red);
                             continue;
-                        }
 
                         string[] faceVertices = new string[vertexCount];
                         for (int i = 0; i < vertexCount; i++)
@@ -69,7 +62,6 @@ public static class MeshLoader
 
                         if (vertexCount == 3)
                         {
-                            // V1, V2, V3
                             for (int i = 0; i < 3; i++)
                             {
                                 ProcessFaceVertex(faceVertices[i], tempPositions, tempTexCoords, tempNormals, finalVertices);
@@ -78,20 +70,13 @@ public static class MeshLoader
 
                         else if (vertexCount == 4)
                         {
-                            // T1: V1, V2, V3
-                            // T2: V1, V3, V4
-
-                            // V1, V2, V3
                             ProcessFaceVertex(faceVertices[0], tempPositions, tempTexCoords, tempNormals, finalVertices);
                             ProcessFaceVertex(faceVertices[1], tempPositions, tempTexCoords, tempNormals, finalVertices);
                             ProcessFaceVertex(faceVertices[2], tempPositions, tempTexCoords, tempNormals, finalVertices);
 
-                            // V1, V3, V4
                             ProcessFaceVertex(faceVertices[0], tempPositions, tempTexCoords, tempNormals, finalVertices);
                             ProcessFaceVertex(faceVertices[2], tempPositions, tempTexCoords, tempNormals, finalVertices);
                             ProcessFaceVertex(faceVertices[3], tempPositions, tempTexCoords, tempNormals, finalVertices);
-
-                            //Utils.ColoredWriteLine($"[OBJ Loader] Case F loaded!", ConsoleColor.Green);
                         }
 
                         else

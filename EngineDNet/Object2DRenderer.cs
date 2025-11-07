@@ -1,6 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
-//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 
@@ -30,7 +29,6 @@ public static class Object2DRenderer
                 GL.DrawElements(PrimitiveType.Triangles, RectMesh.IndicesCount, DrawElementsType.UnsignedInt, 0);
                 break;
             case Text2D text when TextShader != null:
-                //GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Line);
                 TextRenderer.Render(text.Text, text.FontMesh, TextShader, model, text.TextSize, objectMesh2d.Color);
                 break;
             default:

@@ -1,6 +1,5 @@
 ﻿using MadWorldNL.EarCut.Logic;
 using System.Numerics;
-//using OpenTK.Mathematics;
 using SixLabors.Fonts;
 using SixLabors.Fonts.Unicode;
 using SixLabors.ImageSharp.Drawing;

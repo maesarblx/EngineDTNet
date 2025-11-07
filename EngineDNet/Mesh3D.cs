@@ -72,7 +72,6 @@ public class Mesh3D
             if (z > maxZ) maxZ = z;
         }
 
-        // Если не было валидных вершин (защита на случай некорректных данных)
         if (minX == float.MaxValue || minY == float.MaxValue || minZ == float.MaxValue)
         {
             Utils.ColoredWriteLine("Minimal values is NAN. Returning zero", ConsoleColor.Yellow);

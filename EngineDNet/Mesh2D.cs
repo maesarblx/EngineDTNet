@@ -1,7 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
-//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 
@@ -31,17 +30,14 @@ public class Mesh2D: IDisposable
         
         GL.BindVertexArray(Vao);
         GL.BindBuffer(BufferTarget.ArrayBuffer, Vbo);
-        // Copying the data into the buffers
         GL.BufferData(BufferTarget.ArrayBuffer, mesh.Length * Marshal.SizeOf<Vertex>(), mesh, BufferUsageHint.StaticDraw);
         
         GL.BindBuffer(BufferTarget.ElementArrayBuffer, Ebo);
-        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * Marshal.SizeOf<int>(), indices, BufferUsageHint.StaticDraw); // fix
+        GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * Marshal.SizeOf<int>(), indices, BufferUsageHint.StaticDraw);
         
-        // Vertex Position: float X, float Y
         GL.VertexAttribPointer(0, 2, VertexAttribPointerType.Float, false, Marshal.SizeOf<Vertex>(), 0);
         GL.EnableVertexAttribArray(0);
         
-        // Vertex TexCoords: float X, float Y
         GL.VertexAttribPointer(1, 2, VertexAttribPointerType.Float, false, Marshal.SizeOf<Vertex>(), (int)Marshal.OffsetOf<Vertex>(nameof(Vertex.TexCoords)));
         GL.EnableVertexAttribArray(1);
         

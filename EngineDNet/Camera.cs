@@ -44,14 +44,11 @@ public class Camera()
 
     public Vector3 GetUpVector()
     {
-        // yaw/pitch у тебя заданы в градусах (судя по GetFront/GetRight), конвертим в радианы
         float yawRad = Utils.Rad(Yaw);
         float pitchRad = Utils.Rad(Pitch);
 
-        // ограничим pitch, чтобы не получить degenerate case (вверх/вниз)
         pitchRad = Math.Clamp(pitchRad, -MathF.PI / 2f + 0.001f, MathF.PI / 2f - 0.001f);
 
-        // полный фронт-вектор с учётом pitch
         Vector3 front = new Vector3(
             -MathF.Sin(yawRad) * MathF.Cos(pitchRad),
              MathF.Sin(pitchRad),
@@ -59,10 +56,8 @@ public class Camera()
         );
         front = Vector3.Normalize(front);
 
-        // правый вектор (от front и мирового up)
         Vector3 right = Vector3.Normalize(Vector3.Cross(front, Vector3.UnitY));
 
-        // окончательный up как cross(right, front)
         Vector3 up = Vector3.Normalize(Vector3.Cross(right, front));
 
         return up;

@@ -1,7 +1,5 @@
 ﻿using System.Runtime.InteropServices;
 
-// эту хуйн мне написал чатгпт 🤑🤑 / chatgpt wrote this shit 🤑🤑
-
 public class MonitorInfoData
 {
     public IntPtr MonitorHandle;
@@ -62,7 +60,7 @@ public static class MonitorUtils
                     Bottom = mi.rcMonitor.bottom
                 });
             }
-            return true; // продолжать перечисление
+            return true;
         }
 
         if (!EnumDisplayMonitors(IntPtr.Zero, IntPtr.Zero, MonitorEnumCallback, IntPtr.Zero))

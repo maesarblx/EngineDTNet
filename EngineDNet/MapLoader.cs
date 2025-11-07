@@ -2,7 +2,6 @@ using BepuPhysics;
 using BepuPhysics.Collidables;
 using System.Numerics;
 using System.Text.Json;
-//using OpenTK.Mathematics;
 
 namespace EngineDNet;
 

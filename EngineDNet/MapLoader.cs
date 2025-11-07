@@ -11,6 +11,7 @@ public class MapObject
     public string Mesh { get; set; } = "";
     public bool PhysicsEnabled { get; set; } = false;
     public float? Mass { get; set; }
+    public float? TexCoordsMult { get; set; } = 1;
     public float[] Position { get; set; } = new float[3];
     public float[] Rotation { get; set; } = new float[3];
     public float[] Scale { get; set; } = new float[3];
@@ -37,6 +38,7 @@ public static class MapLoader
             var rotation = new Vector3(Utils.Rad(obj.Rotation[0]), Utils.Rad(obj.Rotation[1]), Utils.Rad(obj.Rotation[2]));
             var scale = new Vector3(obj.Scale[0], obj.Scale[1], obj.Scale[2]);
             var gameObject = new GameObject(name, position, rotation, scale, mesh, texture, null, obj.Mass);
+            gameObject.TexCoordsMult = obj.TexCoordsMult != null ? (float)obj.TexCoordsMult : 1;
             mesh.Size = scale;
             gameObject.PhysicsEnabled = obj.PhysicsEnabled;
             if (obj.Mass == null)

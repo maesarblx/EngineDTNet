@@ -11,7 +11,7 @@ public class MapObject
     public string Texture { get; set; } = "";
     public string Mesh { get; set; } = "";
     public bool PhysicsEnabled { get; set; } = false;
-    public float Mass { get; set; } = 1;
+    public float? Mass { get; set; }
     public float[] Position { get; set; } = new float[3];
     public float[] Rotation { get; set; } = new float[3];
     public float[] Scale { get; set; } = new float[3];
@@ -40,6 +40,8 @@ public static class MapLoader
             var gameObject = new GameObject(name, position, rotation, scale, mesh, texture, null, obj.Mass);
             mesh.Size = scale;
             gameObject.PhysicsEnabled = obj.PhysicsEnabled;
+            if (obj.Mass == null)
+                gameObject.MassCalculate();
             gameObject.InitializePhysics();
             Utils.ColoredWriteLine($"[MapLoader] Loaded object: {name}", ConsoleColor.Magenta);
             result.Add(gameObject);

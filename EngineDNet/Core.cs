@@ -1,13 +1,8 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Common.Input;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
 using System.Numerics;
-using System.Runtime.InteropServices;
 
 namespace EngineDNet;
 
@@ -95,7 +90,7 @@ public static class Core
         set => Window.VSync = value;
     }
 
-    public static GameObject LoadObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, GameObject parent, float mass)
+    public static GameObject LoadObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, GameObject parent, float? mass = null)
     {
         var mesh = new Mesh3D(MeshLoader.Load($"models/{name}.obj"));
         var texture = new Texture2D($"textures/{name}.png");
@@ -114,10 +109,26 @@ public static class Core
         return Window.IsKeyPressed(Key);
     }
 
+    private static void render3D()
+    {
+        foreach (var v in CurrentScene.Root.Children)
+        {
+            GameObjectRenderer.Render(v, _shader, _camera, CurrentScene.SceneLightingSettings);
+        }
+    }
+
+    public static void LoadMap(string name)
+    {
+        var mapJsonRaw = File.ReadAllText($"maps/{name}.json");
+        var objects = MapLoader.Load(mapJsonRaw);
+        foreach (var obj in objects)
+        {
+            CurrentScene.Root.Children.Add(obj);
+        }
+    }
+
     private static void WindowOnLoad()
     {
-        var MapName = "Testplate";
-
         _shader = new(File.ReadAllText(_vertexShaderPath), File.ReadAllText(_fragmentShaderPath));
         _textShader = new(File.ReadAllText(_textVertexShaderPath), File.ReadAllText(_textFragmentShaderPath));
         _camera = new();
@@ -137,7 +148,7 @@ public static class Core
             _fpsText = tex;
         }
 
-        GL.ClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        GL.ClearColor(0f, 0f, 0f, 1.0f);
         GL.Enable(EnableCap.Multisample);
         GL.Enable(EnableCap.LineSmooth);
         GL.Enable(EnableCap.PolygonSmooth);
@@ -147,13 +158,8 @@ public static class Core
         Window.CursorState = CursorState.Grabbed;
         Window.CenterWindow();
 
-        var mapJsonRaw = File.ReadAllText($"maps/{MapName}.json");
-        var objects = MapLoader.Load(mapJsonRaw);
-        foreach (var obj in objects)
-        {
-            //obj.Parent = CurrentScene.Root;
-            CurrentScene.Root.Children.Add(obj);
-        }
+        _curScene.Init();
+        LoadMap("Testplate");
     }
 
     private static void WindowOnRenderFrame(FrameEventArgs e)
@@ -164,14 +170,14 @@ public static class Core
 
         CurrentPlayer?.ProcessInput();
 
-        _cameraController.Update((Vector2)Window.MouseState.Delta, (float)e.Time);
+        _cameraController?.Update((Vector2)Window.MouseState.Delta, (float)e.Time);
+
+        if (_cameraController != null)
+            CurrentScene.RenderUpdate(_cameraController.Camera);
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         CurrentScene.Update((float)e.Time);
-        foreach (var v in CurrentScene.Root.Children)
-        {
-            GameObjectRenderer.Render(v, _shader, _camera, CurrentScene.SceneLightingSettings);
-        }
+        render3D();
         Object2DRenderer.Render(_fpsText, _textShader, Window.ClientSize.X, Window.ClientSize.Y);
         Window.SwapBuffers();
     }

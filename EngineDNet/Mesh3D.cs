@@ -1,6 +1,5 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
-//using OpenTK.Mathematics;
 using System.Runtime.InteropServices;
 
 namespace EngineDNet;
@@ -40,12 +39,20 @@ public class Mesh3D
         GL.BindVertexArray(0);
     }
 
+    public float CalculateMass()
+    {
+        var size = GetBoundingSize();
+        return ((size.X + size.Y + size.Z) / 3) * size.LengthSquared() * 0.35f;
+    }
+
     public Vector3 GetBoundingSize()
     {
         if (CurrentVertices == null || CurrentVertices.Count < 3)
+        {
+            Utils.ColoredWriteLine("Vertices is not creater or vertices count is under 3. Returning zero", ConsoleColor.Yellow);
             return Vector3.Zero;
+        }
 
-        // Структура: 8 float на вершину, позиция в первых 3
         const int stride = 8;
         float minX = float.MaxValue, minY = float.MaxValue, minZ = float.MaxValue;
         float maxX = float.MinValue, maxY = float.MinValue, maxZ = float.MinValue;
@@ -67,7 +74,10 @@ public class Mesh3D
 
         // Если не было валидных вершин (защита на случай некорректных данных)
         if (minX == float.MaxValue || minY == float.MaxValue || minZ == float.MaxValue)
+        {
+            Utils.ColoredWriteLine("Minimal values is NAN. Returning zero", ConsoleColor.Yellow);
             return Vector3.Zero;
+        }
 
         return new Vector3(maxX - minX, maxY - minY, maxZ - minZ) * Size;
     }

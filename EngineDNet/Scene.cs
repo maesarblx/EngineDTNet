@@ -162,6 +162,7 @@ public struct SimpleRayHitHandler : IRayHitHandler
 public class Scene
 {
     public GameObject Root { get; private set; }
+    public Skybox Skybox { get; private set; }
     public LightingSettings SceneLightingSettings = new LightingSettings();
     public ThreadDispatcher ThreadDispatcher = new(2);
     public BufferPool BufferPool = new();
@@ -173,6 +174,16 @@ public class Scene
     {
         Root = new("Root", Vector3.Zero, Vector3.Zero, Vector3.One);
         Simulation = Simulation.Create(BufferPool, NarrowPhase, PoseIntegrator, SolveDescription);
+    }
+
+    public void Init()
+    {
+        Skybox = new();
+    }
+
+    public void RenderUpdate(Camera camera)
+    {
+        Skybox.Object.Position = camera.Position;
     }
 
     public void Update(float deltaTime)

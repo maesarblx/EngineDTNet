@@ -2,5 +2,4 @@
 <h2> A 3D engine made for uhh, cool things! </h2>
 
 
-Hi bro im stil thinking about this page.
-srry not done :3
+Hi bro im stil thinking about this page

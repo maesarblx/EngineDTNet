@@ -11,11 +11,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="C:\Users\KagePC\.nuget\packages\sharpfont.dependencies\2.6.0\build\..\bin\msvc10\x86\freetype6.dll" />
-    <Content Remove="C:\Users\KagePC\.nuget\packages\sharpfont\4.0.1\build\..\config\SharpFont.dll.config" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="icon.ico" />
   </ItemGroup>
 

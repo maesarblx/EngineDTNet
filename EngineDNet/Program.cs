@@ -9,11 +9,11 @@ public class Program
         Core.Title = "EngineDNet";
         Core.VSync = VSyncMode.Off;
 
-        Core.VertexShaderPath = "shaders/3d/main.vs";
-        Core.FragmentShaderPath = "shaders/3d/main.frag";
+        Core.VertexShaderPath = "shaders/3d/main.dsv";
+        Core.FragmentShaderPath = "shaders/3d/main.dsf";
 
-        Core.TextVertexShaderPath = "shaders/2d/text.vs";
-        Core.TextFragmentShaderPath = "shaders/2d/text.frag";
+        Core.TextVertexShaderPath = "shaders/2d/text.dsv";
+        Core.TextFragmentShaderPath = "shaders/2d/text.dsf";
 
         Core.Start();
     }

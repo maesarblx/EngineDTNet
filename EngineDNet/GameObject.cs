@@ -7,10 +7,11 @@ public class GameObject
 {
     public Vector3 Position = Vector3.Zero;
     public Vector3 Rotation = Vector3.Zero;
-    public Vector3 Size = Vector3.Zero;
+    public Vector3 Size = Vector3.One;
     public string Name = "GameObject";
     public float Mass = 1;
     public float TexCoordsMult = 1;
+    public Vector2 VecTexCoordsMult = Vector2.One;
     public Mesh3D? Mesh;
     public Texture2D? Texture;
     public bool CanCollide = true;

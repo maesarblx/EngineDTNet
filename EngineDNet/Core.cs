@@ -90,10 +90,10 @@ public static class Core
         set => Window.VSync = value;
     }
 
-    public static GameObject LoadObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, GameObject parent, float? mass = null)
+    public static GameObject LoadObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, GameObject? parent, float? mass = null)
     {
         var mesh = new Mesh3D(MeshLoader.Load($"models/{name}.obj"));
-        var texture = new Texture2D($"textures/{name}.png");
+        var texture = Texture2D.Load($"textures/{name}.png");
         var gameObject = new GameObject(name, position, rotation, scale, mesh, texture, parent, mass);
 
         return gameObject;
@@ -111,6 +111,7 @@ public static class Core
 
     private static void render3D()
     {
+        GameObjectRenderer.Render(CurrentScene.Skybox.Object, _shader, _camera, CurrentScene.SceneLightingSettings);
         foreach (var v in CurrentScene.Root.Children)
         {
             GameObjectRenderer.Render(v, _shader, _camera, CurrentScene.SceneLightingSettings);
@@ -119,7 +120,7 @@ public static class Core
 
     public static void LoadMap(string name)
     {
-        var mapJsonRaw = File.ReadAllText($"maps/{name}.json");
+        var mapJsonRaw = File.ReadAllText($"maps/{name}.dnm");
         var objects = MapLoader.Load(mapJsonRaw);
         foreach (var obj in objects)
         {
@@ -137,10 +138,10 @@ public static class Core
         CurrentPlayer = new();
 
         Object2DRenderer.TextShader = _textShader;
-        var fontMesh = new FontMesh("fonts/Axiforma-Regular.ttf");
+        var fontMesh = new FontMesh("fonts/Pixel.otf");
 
         {
-            var tex = new Text2D(new Vector2(45.0f, 400.0f), Vector2.One, 0.0f, fontMesh)
+            var tex = new Text2D(new Vector2(45.0f, 400.0f), Vector2.One * 0.5f, 0.0f, fontMesh)
             {
                 Color = new Vector3(1.0f, 1.0f, 1.0f),
                 Text = "<FPS>",
@@ -164,19 +165,22 @@ public static class Core
 
     private static void WindowOnRenderFrame(FrameEventArgs e)
     {
-        ElapsedTime += (float)e.Time;
+        var dt = (float)e.Time;
+
+        ElapsedTime += dt;
 
         CurrentCamera.Aspect = (float)Window.Size.X / Window.Size.Y;
 
-        CurrentPlayer?.ProcessInput();
+        CurrentPlayer?.ProcessInput(dt);
+        CurrentPlayer?.RenderUpdate(dt);
 
-        _cameraController?.Update((Vector2)Window.MouseState.Delta, (float)e.Time);
+        _cameraController?.Update((Vector2)Window.MouseState.Delta, dt);
 
         if (_cameraController != null)
             CurrentScene.RenderUpdate(_cameraController.Camera);
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-        CurrentScene.Update((float)e.Time);
+        CurrentScene.Update(dt);
         render3D();
         Object2DRenderer.Render(_fpsText, _textShader, Window.ClientSize.X, Window.ClientSize.Y);
         Window.SwapBuffers();

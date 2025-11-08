@@ -22,7 +22,7 @@ public class Camera()
 
     public Matrix4x4 GetProjectionMatrix()
     {
-        return Matrix4x4.CreatePerspectiveFieldOfView(Utils.Rad(FOV), Aspect, ZNear, ZFar);
+        return Matrix4x4.CreatePerspectiveFieldOfView(Utils.Deg2Rad * FOV, Aspect, ZNear, ZFar);
     }
 
     public Matrix4x4 GetRotationMatrix()
@@ -32,20 +32,20 @@ public class Camera()
 
     public Vector3 GetFrontVector()
     {
-        var yawRad = Utils.Rad(Yaw);
+        var yawRad = Utils.Deg2Rad * Yaw;
         return new Vector3((float)-Math.Sin(yawRad), 0, (float)Math.Cos(yawRad));
     }
 
     public Vector3 GetRightVector()
     {
-        var yawRad = Utils.Rad(Yaw + 90);
+        var yawRad = Utils.Deg2Rad * (Yaw + 90);
         return new Vector3((float)-Math.Sin(yawRad), 0, (float)Math.Cos(yawRad));
     }
 
     public Vector3 GetUpVector()
     {
-        float yawRad = Utils.Rad(Yaw);
-        float pitchRad = Utils.Rad(Pitch);
+        float yawRad = Utils.Deg2Rad * Yaw;
+        float pitchRad = Utils.Deg2Rad * Pitch;
 
         pitchRad = Math.Clamp(pitchRad, -MathF.PI / 2f + 0.001f, MathF.PI / 2f - 0.001f);
 

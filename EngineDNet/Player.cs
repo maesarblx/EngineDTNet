@@ -15,31 +15,36 @@ public class Player
     public float Height = 2f;
     public float Radius = 0.3f;
 
+    public bool Sprinting = false;
+    public bool Crouching = false;
+
     public float GroundAcceleration = 40f;
     public float AirAcceleration = 20f;
-    public float GroundFriction = 12f;
+    public float GroundFriction = 1f;
     public float Gravity = -20f;
     public float JumpSpeed = 6f;
-    public float CollisionDistance = 0.45f;
-    public float MaxSpeed => MoveSpeed + 0.1f;
+    public float MaxSpeed => 150;
+
+    public float MoveAcceleration = 16;
 
     public SimpleRayHitHandler GroundHitHandler = new SimpleRayHitHandler();
 
     private bool grounded = false;
     private BodyHandle bodyHandle;
-    private float mass = 10f;
+    private float mass = 8f;
 
-    public Player() 
+    public Player()
     {
         var capsule = new Capsule(Radius, Height - 2 * Radius);
         var shape = Core.CurrentScene.Simulation.Shapes.Add(capsule);
         var inertia = capsule.ComputeInertia(mass);
+        
         var bodyDesc = BodyDescription.CreateDynamic(new RigidPose(Position), inertia, shape, new BodyActivityDescription(0.01f));
         bodyHandle = Core.CurrentScene.Simulation.Bodies.Add(bodyDesc);
         GroundHitHandler.DIgnored.Add(bodyHandle);
     }
 
-    public void ProcessInput()
+    public void ProcessInput(float dt)
     {
         var targetMoveLocal = Vector3.Zero;
         var targetMoveWorld = Vector3.Zero;
@@ -80,8 +85,17 @@ public class Player
         if (localXZ.LengthSquared() > 0.0001f) localXZ = Vector3.Normalize(localXZ);
         else localXZ = Vector3.Zero;
 
-        MoveDirection = localXZ;
-        WorldMoveDirection = worldXZ;
+        MoveDirection = Vector3.Lerp(MoveDirection, localXZ, 1f - MathF.Exp(-MoveAcceleration * dt));
+        WorldMoveDirection = Vector3.Lerp(WorldMoveDirection, worldXZ, 1f - MathF.Exp(-MoveAcceleration * dt));
+    }
+
+    public void RenderUpdate(float dt)
+    {
+        Sprinting = Core.IsKeyDown(Keys.LeftShift);
+        Crouching = Core.IsKeyDown(Keys.LeftControl);
+
+        Height = Utils.Lerp(Height, Crouching ? 1 : 2, 1f - MathF.Exp(-8 * dt));
+        MoveSpeed = Utils.Lerp(MoveSpeed, (Sprinting && !Crouching) ? 10 : 6 * (Height / 2), 1f - MathF.Exp(-8 * dt));
     }
 
     public void FixedUpdate(float dt)
@@ -102,7 +116,7 @@ public class Player
 
         var vel = bodyRef.Velocity.Linear;
         var velXZ = new Vector3(vel.X, 0f, vel.Z);
-        var desiredXZ = WorldMoveDirection * MaxSpeed;
+        var desiredXZ = WorldMoveDirection * MoveSpeed;
 
         var accel = grounded ? GroundAcceleration : AirAcceleration;
         var maxDeltaThisFrame = accel * dt;
@@ -114,19 +128,14 @@ public class Player
             if (deltaLen > maxDeltaThisFrame)
                 deltaV = Vector3.Normalize(deltaV) * maxDeltaThisFrame;
 
-            vel.X += deltaV.X;
-            vel.Z += deltaV.Z;
+            vel.X += deltaV.X * MoveSpeed * 0.25f;
+            vel.Z += deltaV.Z * MoveSpeed * 0.25f;
         }
 
         if (WorldMoveDirection == Vector3.Zero && grounded)
         {
-            var stopFactor = 1f - MathF.Min(1f, GroundFriction * dt);
-            vel.X *= stopFactor;
-            vel.Z *= stopFactor;
-            if (new Vector3(vel.X, 0f, vel.Z).LengthSquared() < 0.0001f)
-            {
-                vel.X = 0f; vel.Z = 0f;
-            }
+            vel.X = 0f;
+            vel.Z = 0f;
         }
 
         var speedXZ = new Vector3(vel.X, 0f, vel.Z).Length();
@@ -136,6 +145,7 @@ public class Player
             vel.X = norm.X * MaxSpeed;
             vel.Z = norm.Z * MaxSpeed;
         }
+
 
         var wantJump = Core.IsKeyDown(Keys.Space);
         if (wantJump && grounded)

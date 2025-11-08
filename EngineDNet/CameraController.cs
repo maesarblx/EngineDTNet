@@ -19,7 +19,7 @@ public class CameraController(Camera camera)
 
         Camera.Pitch = Utils.Clamp(Camera.Pitch, MinPitch, MaxPitch);
 
-        Camera.Rotation = new Vector3(Utils.Rad(Camera.Pitch), Utils.Rad(Camera.Yaw), 0);
+        Camera.Rotation = new Vector3(Utils.Deg2Rad * (Camera.Pitch), Utils.Deg2Rad * (Camera.Yaw), 0);
         if (Core.CurrentPlayer != null)
             Camera.Position = Core.CurrentPlayer.Position + (Vector3.UnitY * (Core.CurrentPlayer.Height * 0.5f));
     }

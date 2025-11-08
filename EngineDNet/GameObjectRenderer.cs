@@ -16,6 +16,7 @@ internal class GameObjectRenderer
         shader.SetUniform("ViewMatrix", ViewMatrix);
         shader.SetUniform("ProjMatrix", ProjMatrix);
         shader.SetUniform("TexCoordsMult", Object.TexCoordsMult);
+        shader.SetUniform("VecTexCoordsMult", Object.VecTexCoordsMult);
         GL.Enable(EnableCap.CullFace);
         GL.Enable(EnableCap.DepthTest);
         shader.SetUniform("tex", 0);

@@ -17,7 +17,17 @@ public class Mesh3D
     public int VerticesCount { get; private set; }
     public List<float> CurrentVertices { get; private set; }
     public Vector3 Size;
+
     private int _vbo;
+    private static Dictionary<List<float>, Mesh3D> _cachedMeshes = new();
+
+    public static Mesh3D Load(List<float> Vertices)
+    {
+        if (_cachedMeshes.ContainsKey(Vertices)) return _cachedMeshes[Vertices];
+        var mesh = new Mesh3D(Vertices);
+        _cachedMeshes[Vertices] = mesh;
+        return mesh;
+    }
 
     public Mesh3D(List<float> Vertices)
     {

@@ -163,6 +163,7 @@ public class Scene
 {
     public GameObject Root { get; private set; }
     public Skybox? Skybox { get; private set; }
+    public Vector3 Wind = Vector3.Zero;
     public LightingSettings SceneLightingSettings = new();
     public ThreadDispatcher ThreadDispatcher = new(2);
     public BufferPool BufferPool = new();
@@ -199,6 +200,8 @@ public class Scene
                 var bodyRef = Simulation.Bodies.GetBodyReference(obj.PhysicsHandle.GetValueOrDefault());
                 var pos = bodyRef.Pose.Position;
                 var rot = bodyRef.Pose.Orientation;
+
+                bodyRef.Velocity.Linear += Wind * deltaTime;
 
                 obj.Position = new Vector3(pos.X, pos.Y, pos.Z);
                 obj.Rotation = new Vector3(rot.X, rot.Y, rot.Z);

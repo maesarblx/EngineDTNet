@@ -33,6 +33,7 @@ public static class Core
     public static Random Rand = new();
     public static MonitorInfoData CurrentMonitor = MonitorUtils.GetAllMonitors()[0];
     public static float ElapsedTime = 0f;
+    public static string MapName = "Testplate";
 
     public static Player? CurrentPlayer;
 
@@ -92,7 +93,7 @@ public static class Core
 
     public static GameObject LoadObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, GameObject? parent, float? mass = null)
     {
-        var mesh = new Mesh3D(MeshLoader.Load($"models/{name}.obj"));
+        var mesh = Mesh3D.Load(MeshLoader.Load($"models/{name}.obj"));
         var texture = Texture2D.Load($"textures/{name}.png");
         var gameObject = new GameObject(name, position, rotation, scale, mesh, texture, parent, mass);
 
@@ -111,7 +112,8 @@ public static class Core
 
     private static void render3D()
     {
-        GameObjectRenderer.Render(CurrentScene.Skybox.Object, _shader, _camera, CurrentScene.SceneLightingSettings);
+        if (CurrentScene.Skybox != null)
+            GameObjectRenderer.Render(CurrentScene.Skybox.Object, _shader, _camera, CurrentScene.SceneLightingSettings);
         foreach (var v in CurrentScene.Root.Children)
         {
             GameObjectRenderer.Render(v, _shader, _camera, CurrentScene.SceneLightingSettings);
@@ -160,7 +162,7 @@ public static class Core
         Window.CenterWindow();
 
         _curScene.Init();
-        LoadMap("Testplate");
+        LoadMap(MapName);
     }
 
     private static void WindowOnRenderFrame(FrameEventArgs e)
@@ -174,7 +176,7 @@ public static class Core
         CurrentPlayer?.ProcessInput(dt);
         CurrentPlayer?.RenderUpdate(dt);
 
-        _cameraController?.Update((Vector2)Window.MouseState.Delta, dt);
+        _cameraController?.Update((Vector2)Window.MouseState.Delta);
 
         if (_cameraController != null)
             CurrentScene.RenderUpdate(_cameraController.Camera);

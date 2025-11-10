@@ -10,7 +10,7 @@ public class Texture2D
     public int Height { get; set; }
     private int _textureId;
     private static Dictionary<string, Texture2D> _cachedTextures = new();
-    public Texture2D(string path)
+    private Texture2D(string path)
     {
         if (!File.Exists(path))
         {

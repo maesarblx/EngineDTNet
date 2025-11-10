@@ -12,7 +12,7 @@ public class CameraController(Camera camera)
 
     public float FreeSpeed = 10f;
 
-    public void Update(Vector2 mouseDelta, float deltaTime)
+    public void Update(Vector2 mouseDelta)
     {
         Camera.Pitch += mouseDelta.Y * Sensitivity;
         Camera.Yaw += mouseDelta.X * Sensitivity;

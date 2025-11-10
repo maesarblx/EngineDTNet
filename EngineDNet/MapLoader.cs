@@ -36,7 +36,7 @@ public static class MapLoader
             var mesh = Mesh3D.Load(MeshLoader.Load($"models/{obj.Mesh}"));
             var texture = Texture2D.Load($"textures/{obj.Texture}");
             var position = new Vector3(obj.Position[0], obj.Position[1], obj.Position[2]);
-            var rotation = new Vector3(Utils.Deg2Rad * obj.Rotation[0], Utils.Deg2Rad * obj.Rotation[1], Utils.Deg2Rad * obj.Rotation[2]);
+            var rotation = new Vector3(obj.Rotation[0], obj.Rotation[1], obj.Rotation[2]);
             var scale = new Vector3(obj.Scale[0], obj.Scale[1], obj.Scale[2]);
             var gameObject = new GameObject(name, position, rotation, scale, mesh, texture, null, obj.Mass);
             gameObject.TexCoordsMult = obj.TexCoordsMult != null ? (float)obj.TexCoordsMult : 1;

@@ -40,12 +40,14 @@ public class GameObject
         Texture = texture;
         Parent = parent;
         Mass = mass != null ? (float)mass : Mass;
+        Mass = Math.Clamp(Mass, 1f, float.MaxValue);
     }
 
     public void MassCalculate()
     {
         var OldMass = Mass;
         Mass = Mesh != null ? Mesh.CalculateMass() : Mass;
+        Mass = Math.Clamp(Mass, 1f, float.MaxValue);
     }
 
     public void InitializePhysics()

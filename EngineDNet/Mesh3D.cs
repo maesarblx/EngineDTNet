@@ -29,7 +29,7 @@ public class Mesh3D
         return mesh;
     }
 
-    public Mesh3D(List<float> Vertices)
+    private Mesh3D(List<float> Vertices)
     {
         int stride = 8 * sizeof(float);
         VAO = GL.GenVertexArray();

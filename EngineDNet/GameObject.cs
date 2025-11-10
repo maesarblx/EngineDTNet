@@ -3,7 +3,7 @@ using BepuPhysics.Collidables;
 using System.Numerics;
 
 namespace EngineDNet;
-public class GameObject
+public class GameObject : IDisposable
 {
     public Vector3 Position = Vector3.Zero;
     public Vector3 Rotation = Vector3.Zero;
@@ -15,12 +15,15 @@ public class GameObject
     public Mesh3D? Mesh;
     public Texture2D? Texture;
     public bool CanCollide = true;
+    public bool Destroyed { get; private set; } = false;
     private GameObject? _parent;
     public GameObject? Parent
     {
         get => _parent;
         set
         {
+            if (_parent != null)
+                _parent.Children.Remove(this);
             _parent = value;
             value?.Children.Add(this);
         }
@@ -77,5 +80,22 @@ public class GameObject
     public Matrix4x4 GetModelMatrix()
     {
         return Matrix4x4.CreateScale(Size) * Matrix4x4.CreateRotationY(Rotation.Y) * Matrix4x4.CreateRotationX(Rotation.X) * Matrix4x4.CreateRotationZ(Rotation.Z) * Matrix4x4.CreateTranslation(Position);
+    }
+
+    private void DisposeUnmanagedResources(bool disposed)
+    {
+        Parent = null;
+        Destroyed = true;
+    }
+
+    ~GameObject()
+    {
+        DisposeUnmanagedResources(false);
+    }
+
+    public void Dispose()
+    {
+        DisposeUnmanagedResources(true);
+        GC.SuppressFinalize(this);
     }
 }

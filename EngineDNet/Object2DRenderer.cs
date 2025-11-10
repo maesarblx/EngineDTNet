@@ -44,4 +44,33 @@ public static class Object2DRenderer
         }
         GL.BindVertexArray(0);
     }
+
+    public static void Render(Object2DMesh objectMesh2d, Shader shader, int textureID)
+    {
+        var mesh2d = objectMesh2d.Mesh2D;
+        shader.Use();
+        GL.Disable(EnableCap.DepthTest);
+        GL.Disable(EnableCap.CullFace);
+        shader.SetUniform("tex", 0);
+        GL.BindTexture(TextureTarget.Texture2D, textureID);
+        switch (objectMesh2d)
+        {
+            case Rect2D when RectMesh != null:
+                GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+                GL.BindVertexArray(RectMesh.Vao);
+                GL.DrawElements(PrimitiveType.Triangles, RectMesh.IndicesCount, DrawElementsType.UnsignedInt, 0);
+                break;
+            default:
+                {
+                    if (mesh2d != null)
+                    {
+                        GL.PolygonMode(TriangleFace.FrontAndBack, PolygonMode.Fill);
+                        GL.BindVertexArray(mesh2d.Vao);
+                        GL.DrawElements(PrimitiveType.Triangles, mesh2d.IndicesCount, DrawElementsType.UnsignedInt, 0);
+                    }
+                    break;
+                }
+        }
+        GL.BindVertexArray(0);
+    }
 }

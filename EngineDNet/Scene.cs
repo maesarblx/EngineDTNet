@@ -26,7 +26,7 @@ public struct SimplePoseIntegratorCallbacks : IPoseIntegratorCallbacks
     {
     }
 
-    public SimplePoseIntegratorCallbacks(Vector3 gravity, float linearDamping = .03f, float angularDamping = .03f) : this()
+    public SimplePoseIntegratorCallbacks(Vector3 gravity, float linearDamping = 0.03f, float angularDamping = 0.03f) : this()
     {
         Gravity = gravity;
         LinearDamping = linearDamping;

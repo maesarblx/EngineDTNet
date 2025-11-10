@@ -10,15 +10,16 @@ public class Program
         Core.Title = "EngineDNet";
         Core.VSync = VSyncMode.Off;
 
-        Core.VertexShaderPath = "shaders/3d/main.dsv";
-        Core.FragmentShaderPath = "shaders/3d/main.dsf";
-
-        Core.TextVertexShaderPath = "shaders/2d/text.dsv";
-        Core.TextFragmentShaderPath = "shaders/2d/text.dsf";
+        Core.ShaderPaths = new Dictionary<string, string>() 
+        {
+            ["3D"] = "shaders/3d",
+            ["2D"] = "shaders/2d",
+            ["SH"] = "shaders/sh",
+        };
 
         if (args.Length > 0)
             Core.MapName = args[0];
-        else if (!File.Exists("./dnafm.d"))
+        else if (!File.Exists("dnafm.d"))
         {
             Utils.ColoredWriteLine("Current maps available:", ConsoleColor.Yellow);
             foreach (string s in Directory.GetFiles("./maps"))

@@ -16,24 +16,23 @@ public static class Core
         }
     );
 
-    private static string _vertexShaderPath = null!;
-    private static string _fragmentShaderPath = null!;
-
-    private static string _textVertexShaderPath = null!;
-    private static string _textFragmentShaderPath = null!;
-
-    private static Shader _shader = null!;
-    private static Shader _textShader = null!;
     private static Camera _camera = null!;
     private static CameraController _cameraController = null!;
     private static Scene _curScene = null!;
 
+    private static Framebuffer _fbuffer = null!;
+    private static Rect2D _screenRect = null!;
+
     private static Text2D _fpsText = null!;
+
+    private static Dictionary<string, Shader> _shaders = null!;
 
     public static Random Rand = new();
     public static MonitorInfoData CurrentMonitor = MonitorUtils.GetAllMonitors()[0];
     public static float ElapsedTime = 0f;
     public static string MapName = "Testplate";
+
+    public static Dictionary<string, string> ShaderPaths = null!;
 
     public static Player? CurrentPlayer;
 
@@ -53,30 +52,6 @@ public static class Core
     {
         get => _curScene;
         private set => _curScene = value;
-    }
-
-    public static string VertexShaderPath
-    {
-        get => _vertexShaderPath;
-        set => _vertexShaderPath = value;
-    }
-
-    public static string FragmentShaderPath
-    {
-        get => _fragmentShaderPath;
-        set => _fragmentShaderPath = value;
-    }
-
-    public static string TextVertexShaderPath
-    {
-        get => _textVertexShaderPath;
-        set => _textVertexShaderPath = value;
-    }
-
-    public static string TextFragmentShaderPath
-    {
-        get => _textFragmentShaderPath;
-        set => _textFragmentShaderPath = value;
     }
 
     public static string Title
@@ -113,10 +88,10 @@ public static class Core
     private static void render3D()
     {
         if (CurrentScene.Skybox != null)
-            GameObjectRenderer.Render(CurrentScene.Skybox.Object, _shader, _camera, CurrentScene.SceneLightingSettings);
+            GameObjectRenderer.Render(CurrentScene.Skybox.Object, _shaders["Main3D"], _camera, CurrentScene.SceneLightingSettings);
         foreach (var v in CurrentScene.Root.Children)
         {
-            GameObjectRenderer.Render(v, _shader, _camera, CurrentScene.SceneLightingSettings);
+            GameObjectRenderer.Render(v, _shaders["Main3D"], _camera, CurrentScene.SceneLightingSettings);
         }
     }
 
@@ -132,14 +107,39 @@ public static class Core
 
     private static void WindowOnLoad()
     {
-        _shader = new(File.ReadAllText(_vertexShaderPath), File.ReadAllText(_fragmentShaderPath));
-        _textShader = new(File.ReadAllText(_textVertexShaderPath), File.ReadAllText(_textFragmentShaderPath));
-        _camera = new();
+        _shaders = new()
+        {
+            ["Main3D"] = new(File.ReadAllText($"{ShaderPaths["3D"]}/main.dsv"), File.ReadAllText($"{ShaderPaths["3D"]}/main.dsf")),
+            ["Text"] = new(File.ReadAllText($"{ShaderPaths["2D"]}/text.dsv"), File.ReadAllText($"{ShaderPaths["2D"]}/text.dsf")),
+            ["PostFX"] = new(File.ReadAllText($"{ShaderPaths["SH"]}/postfx.dsv"), File.ReadAllText($"{ShaderPaths["SH"]}/postfx.dsf")),
+        };
+
+        _fbuffer = new();
+
+        _screenRect = new(Vector2.Zero, Vector2.Zero, 0);
+
         _curScene = new();
+
+        _camera = new();
         _cameraController = new(_camera);
+
         CurrentPlayer = new();
 
-        Object2DRenderer.TextShader = _textShader;
+        Object2DRenderer.RectMesh = new Mesh2D([
+            // Top Left
+            new Mesh2D.Vertex(new Vector2(-1.0f,1.0f), new Vector2(0.0f, 1.0f)),
+            // Top Right
+            new Mesh2D.Vertex(new Vector2(1.0f,1.0f), new Vector2(1.0f, 1.0f)),
+            // Bottom Left
+            new Mesh2D.Vertex(new Vector2(-1.0f,-1.0f), new Vector2(0.0f, 0.0f)),
+            // Bottom Right
+            new Mesh2D.Vertex(new Vector2(1.0f,-1.0f), new Vector2(1.0f, 0.0f)),
+        ], [
+            0, 1, 3,
+            0, 2, 3
+        ]);
+
+        Object2DRenderer.TextShader = _shaders["Text"];
         var fontMesh = new FontMesh("fonts/Pixel.otf");
 
         {
@@ -152,11 +152,20 @@ public static class Core
         }
 
         GL.ClearColor(0f, 0f, 0f, 1.0f);
+
         GL.Enable(EnableCap.Multisample);
         GL.Enable(EnableCap.LineSmooth);
         GL.Enable(EnableCap.PolygonSmooth);
+
         GL.Hint(HintTarget.LineSmoothHint, HintMode.Nicest);
         GL.Hint(HintTarget.PolygonSmoothHint, HintMode.Nicest);
+
+        _shaders["PostFX"].SetUniform("saturation", _curScene.SceneLightingSettings.Saturation);
+        _shaders["PostFX"].SetUniform("contrast", _curScene.SceneLightingSettings.Contrast);
+        _shaders["PostFX"].SetUniform("brightness", _curScene.SceneLightingSettings.Brightness);
+        _shaders["PostFX"].SetUniform("exposure", _curScene.SceneLightingSettings.Exposure);
+        _shaders["PostFX"].SetUniform("tint", _curScene.SceneLightingSettings.Tint);
+        _shaders["PostFX"].SetUniform("gamma", Settings.Gamma);
 
         Window.CursorState = CursorState.Grabbed;
         Window.CenterWindow();
@@ -183,8 +192,9 @@ public static class Core
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
         CurrentScene.Update(dt);
-        render3D();
-        Object2DRenderer.Render(_fpsText, _textShader, Window.ClientSize.X, Window.ClientSize.Y);
+        _fbuffer.Draw(render3D, Window.ClientSize.X, Window.ClientSize.Y);
+        Object2DRenderer.Render(_screenRect, _shaders["PostFX"], _fbuffer.TextureID);
+        Object2DRenderer.Render(_fpsText, _shaders["Text"], Window.ClientSize.X, Window.ClientSize.Y);
         Window.SwapBuffers();
     }
 

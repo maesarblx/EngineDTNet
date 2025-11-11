@@ -1,15 +1,18 @@
-﻿using EngineDNet.Camera;
+﻿using EngineDNet.Assets;
+using EngineDNet.Assets.Loaders;
+using EngineDNet.Assets.Meshes;
+using EngineDNet.Assets.Textures;
+using EngineDNet.Camera;
 using EngineDNet.Global;
-using EngineDNet.Loaders;
-using EngineDNet.Meshes;
-using EngineDNet.ObjectRenderers;
+using EngineDNet.Graphics.Renderers;
 using EngineDNet.Objects;
+using EngineDNet.Workspace;
 using EngineDNet.Rendering;
-using EngineDNet.Textures;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
+
 using System.Numerics;
 
 namespace EngineDNet;
@@ -39,6 +42,8 @@ public static class Core
     public static MonitorInfoData CurrentMonitor = MonitorUtils.GetAllMonitors()[0];
     public static float ElapsedTime = 0f;
     public static string MapName = "Testplate";
+
+    public static AssetManager AssetManager = null!;
 
     public static Dictionary<string, string> ShaderPaths = null!;
 
@@ -76,7 +81,7 @@ public static class Core
 
     public static GameObject LoadObject(string name, Vector3 position, Vector3 rotation, Vector3 scale, GameObject? parent, float? mass = null)
     {
-        var mesh = Mesh3D.Load(MeshLoader.Load($"models/{name}.obj"));
+        var mesh = Mesh3D.Load(AssetManager.Load<List<float>>($"models/{name}.obj"));
         var texture = Texture2D.Load($"textures/{name}.png");
         var gameObject = new GameObject(name, position, rotation, scale, mesh, texture, parent, mass);
 
@@ -105,8 +110,7 @@ public static class Core
 
     public static void LoadMap(string name)
     {
-        var mapJsonRaw = File.ReadAllText($"maps/{name}.dnm");
-        var objects = MapLoader.Load(mapJsonRaw);
+        var objects = AssetManager.Load<List<GameObject>>($"maps/{name}.dnm");
         foreach (var obj in objects)
         {
             CurrentScene.Root.Children.Add(obj);
@@ -132,6 +136,9 @@ public static class Core
         _cameraController = new(_camera);
 
         CurrentPlayer = new();
+
+        var loaders = new IAssetLoader[] { new MeshLoader(), new MapLoader() };
+        AssetManager = new(loaders);
 
         Object2DRenderer.RectMesh = new Mesh2D([
             // Top Left

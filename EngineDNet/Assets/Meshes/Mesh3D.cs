@@ -3,7 +3,7 @@ using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace EngineDNet.Meshes;
+namespace EngineDNet.Assets.Meshes;
 public class Mesh3D
 {
     [StructLayout(LayoutKind.Sequential)]

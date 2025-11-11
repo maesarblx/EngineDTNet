@@ -1,10 +1,12 @@
 ﻿using EngineDNet.Camera;
 using EngineDNet.Objects;
 using EngineDNet.Rendering;
+using EngineDNet.Workspace;
 using OpenTK.Graphics.OpenGL4;
 
-namespace EngineDNet.ObjectRenderers;
-internal class GameObjectRenderer
+namespace EngineDNet.Graphics.Renderers;
+
+public class GameObjectRenderer : IRenderer3D
 {
     public static void Render(GameObject Object, Shader shader, Camera3D camera, LightingSettings lightingSettings)
     {

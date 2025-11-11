@@ -11,7 +11,7 @@ using EngineDNet.Utilities;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace EngineDNet.Global;
+namespace EngineDNet.Workspace;
 
 public struct SimplePoseIntegratorCallbacks : IPoseIntegratorCallbacks
 {

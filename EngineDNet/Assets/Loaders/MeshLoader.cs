@@ -1,10 +1,10 @@
 ﻿using EngineDNet.Utilities;
 using System.Numerics;
 
-namespace EngineDNet.Loaders;
-public static class MeshLoader
+namespace EngineDNet.Assets.Loaders;
+public class MeshLoader : IAssetLoader
 {
-    public static List<float> Load(string filePath)
+    public List<float> Load(string filePath)
     {
         var tempPositions = new List<Vector3>();
         var tempTexCoords = new List<Vector2>();
@@ -118,5 +118,17 @@ public static class MeshLoader
         final.Add(norm[normIndex].X);
         final.Add(norm[normIndex].Y);
         final.Add(norm[normIndex].Z);
+    }
+
+    public bool CanLoad(string extension) => extension == ".obj" || extension == ".mesh";
+
+    object IAssetLoader.Load(string path)
+    {
+        return Load(path);
+    }
+
+    public async Task<object> LoadAsync(string path)
+    {
+        return await Task.Run(() => Load(path));
     }
 }

@@ -1,4 +1,4 @@
-﻿using EngineDNet.Meshes;
+﻿using EngineDNet.Assets.Meshes;
 
 namespace EngineDNet.Managers;
 public static class Mesh3DManager

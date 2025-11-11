@@ -2,7 +2,7 @@
 using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Assets.Meshes;
 
 public class Mesh2D: IDisposable
 {

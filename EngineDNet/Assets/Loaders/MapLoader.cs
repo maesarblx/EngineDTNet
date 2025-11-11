@@ -1,12 +1,13 @@
 using BepuPhysics;
 using BepuPhysics.Collidables;
-using EngineDNet.Meshes;
+using EngineDNet.Assets.Meshes;
+using EngineDNet.Assets.Textures;
 using EngineDNet.Objects;
 using EngineDNet.Utilities;
 using System.Numerics;
 using System.Text.Json;
 
-namespace EngineDNet.Loaders;
+namespace EngineDNet.Assets.Loaders;
 
 public class MapObject
 {
@@ -26,17 +27,20 @@ public class MapData
     public Dictionary<string, MapObject> Objects { get; set; } = new();
 }
 
-public static class MapLoader
+public class MapLoader : IAssetLoader
 {
-    public static List<GameObject> Load(string json)
+    public bool CanLoad(string extension) => extension == ".dnm" || extension == ".json";
+
+    public List<GameObject> Load(string path)
     {
+        var json = File.ReadAllText(path);
         var map = JsonSerializer.Deserialize<MapData>(json);
         var result = new List<GameObject>();
         if (map == null) return result;
 
         foreach (var (name, obj) in map.Objects)
         {
-            var mesh = Mesh3D.Load(MeshLoader.Load($"models/{obj.Mesh}"));
+            var mesh = Mesh3D.Load(Core.AssetManager.Load<List<float>>($"models/{obj.Mesh}"));
             var texture = Texture2D.Load($"textures/{obj.Texture}");
             var position = new Vector3(obj.Position[0], obj.Position[1], obj.Position[2]);
             var rotation = new Vector3(obj.Rotation[0], obj.Rotation[1], obj.Rotation[2]);
@@ -54,5 +58,15 @@ public static class MapLoader
         }
 
         return result;
+    }
+
+    public async Task<object> LoadAsync(string path)
+    {
+        return await Task.Run(() => Load(path));
+    }
+
+    object IAssetLoader.Load(string path)
+    {
+        return Load(path);
     }
 }

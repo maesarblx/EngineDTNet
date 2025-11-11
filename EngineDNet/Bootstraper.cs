@@ -3,7 +3,7 @@ using OpenTK.Windowing.Common;
 using System.IO.Enumeration;
 
 namespace EngineDNet;
-public class Init
+public class Bootstraper
 {
     public static void Main(string[] args)
     {

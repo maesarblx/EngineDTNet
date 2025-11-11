@@ -1,6 +1,7 @@
 ﻿using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Workspace;
+
 public class LightingSettings
 {
     public Vector3 AmbientColor = new Vector3(1.0f, 1.0f, 1.0f);

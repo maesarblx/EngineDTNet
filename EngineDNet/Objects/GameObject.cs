@@ -1,6 +1,7 @@
 ﻿using BepuPhysics;
 using BepuPhysics.Collidables;
-using EngineDNet.Meshes;
+using EngineDNet.Assets.Meshes;
+using EngineDNet.Assets.Textures;
 using EngineDNet.Utilities;
 using System.Numerics;
 

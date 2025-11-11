@@ -1,9 +1,9 @@
-﻿using EngineDNet.Meshes;
+﻿using EngineDNet.Assets.Meshes;
 using EngineDNet.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Graphics.Renderers;
 
 public static class TextRenderer
 {

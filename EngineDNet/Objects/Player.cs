@@ -1,6 +1,6 @@
 ﻿using BepuPhysics;
 using BepuPhysics.Collidables;
-using EngineDNet.Global;
+using EngineDNet.Workspace;
 using EngineDNet.Utilities;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Numerics;

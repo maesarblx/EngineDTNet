@@ -1,6 +1,6 @@
-﻿using EngineDNet.Meshes;
+﻿using EngineDNet.Assets.Meshes;
 using System.Numerics;
-namespace EngineDNet.Textures;
+namespace EngineDNet.Assets.Textures;
 
 public class Text2D(Vector2 position, Vector2 size, float rotation, FontMesh fontMesh): Object2DMesh(position, size, rotation)
 {

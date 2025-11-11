@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 using OpenTK.Graphics.OpenGL4;
 using EngineDNet.Utilities;
 
-namespace EngineDNet;
+namespace EngineDNet.Assets.Textures;
 public class Texture2D
 {
     public int Width { get; set; }

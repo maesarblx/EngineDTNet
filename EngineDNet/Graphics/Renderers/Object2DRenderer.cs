@@ -1,13 +1,13 @@
-﻿using EngineDNet.Meshes;
+﻿using EngineDNet.Assets.Meshes;
+using EngineDNet.Assets.Textures;
 using EngineDNet.Rendering;
-using EngineDNet.Textures;
 using EngineDNet.Utilities;
 using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
 
-namespace EngineDNet.ObjectRenderers;
+namespace EngineDNet.Graphics.Renderers;
 
-public static class Object2DRenderer
+public class Object2DRenderer : IRenderer2D
 {
     public static Mesh2D? RectMesh;
     public static Shader? TextShader;

@@ -4,7 +4,7 @@ using SixLabors.Fonts;
 using SixLabors.Fonts.Unicode;
 using SixLabors.ImageSharp.Drawing;
 
-namespace EngineDNet.Meshes;
+namespace EngineDNet.Assets.Meshes;
 
 public class FontMesh
 {

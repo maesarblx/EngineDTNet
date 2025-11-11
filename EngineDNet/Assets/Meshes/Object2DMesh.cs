@@ -1,7 +1,7 @@
 ﻿using EngineDNet.Objects;
 using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Assets.Meshes;
 
 public abstract class Object2DMesh(Vector2 position, Vector2 size, float rotation, Mesh2D? mesh = null) : BaseObject2D(position, size, rotation)
 {

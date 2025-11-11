@@ -1,8 +1,9 @@
-﻿using System.Numerics;
+﻿using EngineDNet.Utilities;
+using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Camera;
 
-public class Camera()
+public class Camera3D()
 {
     public Vector3 Position = Vector3.UnitY * 2;
     public Vector3 Rotation = Vector3.Zero;

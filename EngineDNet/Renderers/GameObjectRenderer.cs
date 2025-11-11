@@ -1,9 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using EngineDNet.Camera;
+using EngineDNet.Objects;
+using EngineDNet.Rendering;
+using OpenTK.Graphics.OpenGL4;
 
-namespace EngineDNet;
+namespace EngineDNet.ObjectRenderers;
 internal class GameObjectRenderer
 {
-    public static void Render(GameObject Object, Shader shader, Camera camera, LightingSettings lightingSettings)
+    public static void Render(GameObject Object, Shader shader, Camera3D camera, LightingSettings lightingSettings)
     {
         if (Object.Mesh == null) return;
         shader.Use();

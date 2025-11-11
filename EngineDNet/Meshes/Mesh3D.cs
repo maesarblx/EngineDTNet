@@ -1,8 +1,9 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using EngineDNet.Utilities;
+using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
-namespace EngineDNet;
+namespace EngineDNet.Meshes;
 public class Mesh3D
 {
     [StructLayout(LayoutKind.Sequential)]
@@ -52,7 +53,7 @@ public class Mesh3D
     public float CalculateMass()
     {
         var size = GetBoundingSize();
-        return ((size.X + size.Y + size.Z) / 3) * size.LengthSquared() * 0.35f;
+        return (size.X + size.Y + size.Z) / 3 * size.LengthSquared() * 0.35f;
     }
 
     public Vector3 GetBoundingSize()

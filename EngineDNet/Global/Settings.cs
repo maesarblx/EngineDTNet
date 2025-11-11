@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Global;
 
 public static class Settings
 {

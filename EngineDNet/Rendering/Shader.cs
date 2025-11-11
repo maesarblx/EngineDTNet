@@ -1,7 +1,7 @@
 ﻿using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Rendering;
 
 public class Shader: IDisposable
 {

@@ -1,6 +1,7 @@
-﻿using System.Numerics;
+﻿using EngineDNet.Utilities;
+using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Loaders;
 public static class MeshLoader
 {
     public static List<float> Load(string filePath)

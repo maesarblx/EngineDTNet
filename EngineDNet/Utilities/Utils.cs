@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Utilities;
 public static class Utils
 {
     public const float DegToRad = (float)Math.PI / 180f;

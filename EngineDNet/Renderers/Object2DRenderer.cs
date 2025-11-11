@@ -1,7 +1,11 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using EngineDNet.Meshes;
+using EngineDNet.Rendering;
+using EngineDNet.Textures;
+using EngineDNet.Utilities;
+using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.ObjectRenderers;
 
 public static class Object2DRenderer
 {
@@ -17,7 +21,7 @@ public static class Object2DRenderer
         var size = objectMesh2d.Size;
         var model = Matrix4x4.CreateScale(new Vector3(size.X, size.Y, 1.0f))
                     * Matrix4x4.CreateRotationZ(Utils.DegToRad * objectMesh2d.Rotation)
-                    * Matrix4x4.CreateTranslation((Vector3.UnitX * objectMesh2d.Position.X) + (Vector3.UnitY * objectMesh2d.Position.Y));
+                    * Matrix4x4.CreateTranslation(Vector3.UnitX * objectMesh2d.Position.X + Vector3.UnitY * objectMesh2d.Position.Y);
         shader.SetUniform("projection", projection);
         shader.SetUniform("model", model);
         shader.SetUniform("color", objectMesh2d.Color);

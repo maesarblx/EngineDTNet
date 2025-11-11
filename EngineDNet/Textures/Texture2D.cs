@@ -2,6 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using OpenTK.Graphics.OpenGL4;
+using EngineDNet.Utilities;
 
 namespace EngineDNet;
 public class Texture2D

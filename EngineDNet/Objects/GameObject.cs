@@ -1,8 +1,10 @@
 ﻿using BepuPhysics;
 using BepuPhysics.Collidables;
+using EngineDNet.Meshes;
+using EngineDNet.Utilities;
 using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Objects;
 public class GameObject : IDisposable
 {
     public Vector3 Position = Vector3.Zero;

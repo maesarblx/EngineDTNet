@@ -1,4 +1,6 @@
-﻿namespace EngineDNet;
+﻿using EngineDNet.Meshes;
+
+namespace EngineDNet.Managers;
 public static class Mesh3DManager
 {
     private static Dictionary<string, Mesh3D> _meshes = new Dictionary<string, Mesh3D>();

@@ -1,9 +1,10 @@
-﻿using System.Numerics;
+﻿using EngineDNet.Utilities;
+using System.Numerics;
 
-namespace EngineDNet;
-public class CameraController(Camera camera)
+namespace EngineDNet.Camera;
+public class CameraController3D(Camera3D camera)
 {
-    public Camera Camera = camera;
+    public Camera3D Camera = camera;
 
     public float MinPitch = -89f;
     public float MaxPitch = 89f;
@@ -19,8 +20,8 @@ public class CameraController(Camera camera)
 
         Camera.Pitch = Utils.Clamp(Camera.Pitch, MinPitch, MaxPitch);
 
-        Camera.Rotation = new Vector3(Utils.Deg2Rad * (Camera.Pitch), Utils.Deg2Rad * (Camera.Yaw), 0);
+        Camera.Rotation = new Vector3(Utils.Deg2Rad * Camera.Pitch, Utils.Deg2Rad * Camera.Yaw, 0);
         if (Core.CurrentPlayer != null)
-            Camera.Position = Core.CurrentPlayer.Position + (Vector3.UnitY * (Core.CurrentPlayer.Height * 0.5f));
+            Camera.Position = Core.CurrentPlayer.Position + Vector3.UnitY * (Core.CurrentPlayer.Height * 0.5f);
     }
 }

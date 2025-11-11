@@ -1,4 +1,12 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using EngineDNet.Camera;
+using EngineDNet.Global;
+using EngineDNet.Loaders;
+using EngineDNet.Meshes;
+using EngineDNet.ObjectRenderers;
+using EngineDNet.Objects;
+using EngineDNet.Rendering;
+using EngineDNet.Textures;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
@@ -16,8 +24,8 @@ public static class Core
         }
     );
 
-    private static Camera _camera = null!;
-    private static CameraController _cameraController = null!;
+    private static Camera3D _camera = null!;
+    private static CameraController3D _cameraController = null!;
     private static Scene _curScene = null!;
 
     private static Framebuffer _fbuffer = null!;
@@ -42,7 +50,7 @@ public static class Core
         set => Window.Size = value;
     }
 
-    public static Camera CurrentCamera
+    public static Camera3D CurrentCamera
     {
         get => _camera;
         private set => _camera = value;

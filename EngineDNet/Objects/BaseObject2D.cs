@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Objects;
 
 public abstract class BaseObject2D(Vector2 position, Vector2 size, float rotation)
 {

@@ -1,8 +1,9 @@
-﻿using OpenTK.Windowing.Common;
+﻿using EngineDNet.Utilities;
+using OpenTK.Windowing.Common;
 using System.IO.Enumeration;
 
 namespace EngineDNet;
-public class Program
+public class Init
 {
     public static void Main(string[] args)
     {

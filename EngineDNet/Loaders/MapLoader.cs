@@ -1,9 +1,12 @@
 using BepuPhysics;
 using BepuPhysics.Collidables;
+using EngineDNet.Meshes;
+using EngineDNet.Objects;
+using EngineDNet.Utilities;
 using System.Numerics;
 using System.Text.Json;
 
-namespace EngineDNet;
+namespace EngineDNet.Loaders;
 
 public class MapObject
 {

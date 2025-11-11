@@ -5,10 +5,13 @@ using BepuPhysics.Constraints;
 using BepuPhysics.Trees;
 using BepuUtilities;
 using BepuUtilities.Memory;
+using EngineDNet.Camera;
+using EngineDNet.Objects;
+using EngineDNet.Utilities;
 using System.Numerics;
 using System.Runtime.CompilerServices;
 
-namespace EngineDNet;
+namespace EngineDNet.Global;
 
 public struct SimplePoseIntegratorCallbacks : IPoseIntegratorCallbacks
 {
@@ -182,11 +185,11 @@ public class Scene
         Skybox = new();
     }
 
-    public void RenderUpdate(Camera camera)
+    public void RenderUpdate(Camera3D camera)
     {
         if (Skybox == null)
             return;
-        Skybox.Object.Rotation = (Vector3.UnitY * Core.ElapsedTime * 0.01f) + (Vector3.UnitX * 180 * Utils.Deg2Rad);
+        Skybox.Object.Rotation = Vector3.UnitY * Core.ElapsedTime * 0.01f + Vector3.UnitX * 180 * Utils.Deg2Rad;
         Skybox.Object.Position = camera.Position;
     }
 

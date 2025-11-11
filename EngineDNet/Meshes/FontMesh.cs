@@ -4,7 +4,7 @@ using SixLabors.Fonts;
 using SixLabors.Fonts.Unicode;
 using SixLabors.ImageSharp.Drawing;
 
-namespace EngineDNet;
+namespace EngineDNet.Meshes;
 
 public class FontMesh
 {
@@ -42,8 +42,8 @@ public class FontMesh
         {
             var pa = poly[a];
             var pb = poly[b];
-            if (((pa.Y > pt.Y) != (pb.Y > pt.Y)) &&
-                (pt.X < (pb.X - pa.X) * (pt.Y - pa.Y) / (pb.Y - pa.Y + 0.0f) + pa.X))
+            if (pa.Y > pt.Y != pb.Y > pt.Y &&
+                pt.X < (pb.X - pa.X) * (pt.Y - pa.Y) / (pb.Y - pa.Y + 0.0f) + pa.X)
             {
                 inside = !inside;
             }

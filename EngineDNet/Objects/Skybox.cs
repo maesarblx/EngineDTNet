@@ -1,6 +1,6 @@
 ﻿using System.Numerics;
 
-namespace EngineDNet;
+namespace EngineDNet.Objects;
 
 public class Skybox
 {

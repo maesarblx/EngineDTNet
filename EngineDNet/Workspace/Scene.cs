@@ -166,7 +166,6 @@ public class Scene
 {
     public GameObject Root { get; private set; }
     public Skybox? Skybox { get; private set; }
-    public Vector3 Wind = Vector3.Zero;
     public LightingSettings SceneLightingSettings = new();
     public ThreadDispatcher ThreadDispatcher = new(2);
     public BufferPool BufferPool = new();
@@ -174,6 +173,15 @@ public class Scene
     public SimpleNarrowPhaseCallbacks NarrowPhase = new(new SpringSettings(30, 1));
     public SolveDescription SolveDescription = new(8, 1);
     public Simulation Simulation;
+
+    public Vector3 Wind = Vector3.Zero;
+
+    const float airDensity = 1.225f;
+    const float defaultCd = 1.0f;
+    const float defaultArea = 0.5f;
+    const float gustAmplitude = 3f;
+    const float gustFrequency = 0.5f;
+
     public Scene()
     {
         Root = new("Root", Vector3.Zero, Vector3.Zero, Vector3.One);
@@ -195,20 +203,78 @@ public class Scene
 
     public void Update(float deltaTime)
     {
+        ApplyWindForces(deltaTime);
         Simulation.Timestep(deltaTime, ThreadDispatcher);
+
         foreach (var obj in Root.Children)
         {
             if (obj.PhysicsEnabled && obj.PhysicsHandle != null)
             {
-                var bodyRef = Simulation.Bodies.GetBodyReference(obj.PhysicsHandle.GetValueOrDefault());
+                var bodyHandle = obj.PhysicsHandle.GetValueOrDefault();
+                var bodyRef = Simulation.Bodies.GetBodyReference(bodyHandle);
+
                 var pos = bodyRef.Pose.Position;
                 var rot = bodyRef.Pose.Orientation;
-
-                bodyRef.Velocity.Linear += Wind * deltaTime;
 
                 obj.Position = new Vector3(pos.X, pos.Y, pos.Z);
                 obj.Rotation = new Vector3(rot.X, rot.Y, rot.Z);
             }
+        }
+    }
+
+    private void ApplyWindForces(float deltaTime)
+    {
+        const float airDensity = 1.225f;
+        const float defaultCd = 1.0f;
+        const float defaultArea = 0.5f;
+        const float gustAmplitude = 2.0f;
+        const float gustFrequency = 0.4f;
+        const float maxAcceleration = 50f;
+        const float minSpeedEpsilon = 1e-4f;
+
+        float time = Core.ElapsedTime;
+        Vector3 baseWindDir = Wind == Vector3.Zero ? Vector3.UnitX : Vector3.Normalize(Wind);
+        Vector3 windWithGust = Wind + baseWindDir * (gustAmplitude * MathF.Sin(time * MathF.PI * 2f * gustFrequency));
+
+        foreach (var obj in Root.Children)
+        {
+            if (!(obj.PhysicsEnabled && obj.PhysicsHandle != null))
+                continue;
+
+            var handle = obj.PhysicsHandle.GetValueOrDefault();
+            var bodyRef = Simulation.Bodies.GetBodyReference(handle);
+
+            var invMass = bodyRef.LocalInertia.InverseMass;
+            if (invMass <= 0f)
+                continue;
+
+            Vector3 vRel = windWithGust - bodyRef.Velocity.Linear;
+            float speed = vRel.Length();
+            if (speed <= minSpeedEpsilon)
+                continue;
+
+            float Cd = (obj is GameObject a && a.DragCoefficient > 0) ? a.DragCoefficient : defaultCd;
+            float area = (obj is GameObject b && b.CrossSectionalArea > 0) ? b.CrossSectionalArea : defaultArea;
+
+            Vector3 dragForce = -0.5f * airDensity * Cd * area * speed * vRel;
+
+            float mass = 1f / invMass;
+            float maxForce = mass * maxAcceleration;
+            float forceMag = dragForce.Length();
+            if (forceMag > maxForce)
+                dragForce = Vector3.Normalize(dragForce) * maxForce;
+
+            Vector3 impulse = dragForce * deltaTime;
+
+            Vector3 dv = impulse * invMass;
+            const float maxDeltaVPerFrame = 30f;
+            float dvMag = dv.Length();
+            if (dvMag > maxDeltaVPerFrame)
+                dv = Vector3.Normalize(dv) * maxDeltaVPerFrame;
+
+            bodyRef.Velocity.Linear += dv;
+
+            bodyRef.Awake = true;
         }
     }
 }

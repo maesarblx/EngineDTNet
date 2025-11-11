@@ -13,6 +13,8 @@ public class GameObject : IDisposable
     public Vector3 Size = Vector3.One;
     public string Name = "GameObject";
     public float Mass = 1;
+    public float DragCoefficient;
+    public float CrossSectionalArea;
     public float TexCoordsMult = 1;
     public Vector2 VecTexCoordsMult = Vector2.One;
     public Mesh3D? Mesh;

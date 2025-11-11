@@ -11,16 +11,21 @@ public class GameObject : IDisposable
     public Vector3 Position = Vector3.Zero;
     public Vector3 Rotation = Vector3.Zero;
     public Vector3 Size = Vector3.One;
+
     public string Name = "GameObject";
+
     public float Mass = 1;
     public float DragCoefficient;
     public float CrossSectionalArea;
     public float TexCoordsMult = 1;
+
     public Vector2 VecTexCoordsMult = Vector2.One;
     public Mesh3D? Mesh;
     public Texture2D? Texture;
+
     public bool CanCollide = true;
     public bool Destroyed { get; private set; } = false;
+
     private GameObject? _parent;
     public GameObject? Parent
     {
@@ -33,9 +38,12 @@ public class GameObject : IDisposable
             value?.Children.Add(this);
         }
     }
+
     public List<GameObject> Children = new();
+
     public BodyHandle? PhysicsHandle { get; set; }
     public StaticHandle? StaticPhysicsHandle { get; set; }
+
     public bool PhysicsEnabled { get; set; } = false;
 
     public GameObject(string name, Vector3 position, Vector3 rotation, Vector3 size, Mesh3D? mesh = null, Texture2D? texture = null, GameObject? parent = null, float? mass = null)

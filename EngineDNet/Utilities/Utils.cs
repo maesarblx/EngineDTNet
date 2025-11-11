@@ -1,8 +1,10 @@
 ﻿using System.Numerics;
 
 namespace EngineDNet.Utilities;
+
 public static class Utils
 {
+    private static Random _rand = new();
     public const float DegToRad = (float)Math.PI / 180f;
     public static Vector3 FlatXZ = Vector3.UnitX + Vector3.UnitZ;
     public static float Deg2Rad = (float)Math.PI / 180f;
@@ -19,12 +21,6 @@ public static class Utils
     }
     public static float RandomFloat(float min, float max)
     {
-        return (float)(Core.Rand.NextDouble() * (max - min) + min);
-    }
-    public static float Clamp(float value, float min, float max)
-    {
-        if (value < min) return min;
-        if (value > max) return max;
-        return value;
+        return (float)(_rand.NextDouble() * (max - min) + min);
     }
 }

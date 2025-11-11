@@ -1,13 +1,17 @@
 ﻿using EngineDNet.Utilities;
 using OpenTK.Windowing.Common;
-using System.IO.Enumeration;
+using System.Windows.Forms;
 
 namespace EngineDNet;
 public class Bootstraper
 {
     public static void Main(string[] args)
     {
-        Core.WindowSize = new OpenTK.Mathematics.Vector2i(Core.CurrentMonitor.Width / 2, Core.CurrentMonitor.Height / 2);
+        var primaryScreen = Screen.PrimaryScreen!;
+        if (primaryScreen == null)
+            return;
+        var screenBounds = primaryScreen.Bounds!;
+        Core.WindowSize = new OpenTK.Mathematics.Vector2i(screenBounds.Width / 2, screenBounds.Height / 2);
         Core.Title = "EngineDNet";
         Core.VSync = VSyncMode.Off;
 

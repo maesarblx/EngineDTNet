@@ -31,15 +31,15 @@ public class Player
 
     public SimpleRayHitHandler GroundHitHandler = new SimpleRayHitHandler();
 
-    private bool grounded = false;
+    private bool _grounded = false;
     private BodyHandle bodyHandle;
-    private float mass = 8f;
+    private float _mass = 8f;
 
     public Player()
     {
         var capsule = new Capsule(Radius, Height - 2 * Radius);
         var shape = Core.CurrentScene.Simulation.Shapes.Add(capsule);
-        var inertia = capsule.ComputeInertia(mass);
+        var inertia = capsule.ComputeInertia(_mass);
         
         var bodyDesc = BodyDescription.CreateDynamic(new RigidPose(Position), inertia, shape, new BodyActivityDescription(0.01f));
         bodyHandle = Core.CurrentScene.Simulation.Bodies.Add(bodyDesc);
@@ -114,13 +114,13 @@ public class Player
 
         Core.CurrentScene.Simulation.RayCast(pos, -Vector3.UnitY, rayLength, ref GroundHitHandler);
 
-        grounded = GroundHitHandler.Hit && Vector3.Dot(GroundHitHandler.Normal, Vector3.UnitY) > 0.7f;
+        _grounded = GroundHitHandler.Hit && Vector3.Dot(GroundHitHandler.Normal, Vector3.UnitY) > 0.7f;
 
         var vel = bodyRef.Velocity.Linear;
         var velXZ = new Vector3(vel.X, 0f, vel.Z);
         var desiredXZ = WorldMoveDirection * MoveSpeed;
 
-        var accel = grounded ? GroundAcceleration : AirAcceleration;
+        var accel = _grounded ? GroundAcceleration : AirAcceleration;
         var maxDeltaThisFrame = accel * dt;
 
         var deltaV = desiredXZ - velXZ;
@@ -134,7 +134,7 @@ public class Player
             vel.Z += deltaV.Z * MoveSpeed * 0.25f;
         }
 
-        if (WorldMoveDirection == Vector3.Zero && grounded)
+        if (WorldMoveDirection == Vector3.Zero && _grounded)
         {
             vel.X = 0f;
             vel.Z = 0f;
@@ -150,10 +150,10 @@ public class Player
 
 
         var wantJump = Core.IsKeyDown(Keys.Space);
-        if (wantJump && grounded)
+        if (wantJump && _grounded)
         {
             vel.Y += JumpSpeed * 0.01f;
-            grounded = false;
+            _grounded = false;
         }
 
         bodyRef.Velocity.Angular = Vector3.Zero;

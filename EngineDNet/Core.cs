@@ -3,16 +3,14 @@ using EngineDNet.Assets.Loaders;
 using EngineDNet.Assets.Meshes;
 using EngineDNet.Assets.Textures;
 using EngineDNet.Camera;
-using EngineDNet.Global;
 using EngineDNet.Graphics.Renderers;
 using EngineDNet.Objects;
-using EngineDNet.Workspace;
 using EngineDNet.Rendering;
+using EngineDNet.Workspace;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-
 using System.Numerics;
 
 namespace EngineDNet;
@@ -39,7 +37,6 @@ public static class Core
     private static Dictionary<string, Shader> _shaders = null!;
 
     public static Random Rand = new();
-    public static MonitorInfoData CurrentMonitor = MonitorUtils.GetAllMonitors()[0];
     public static float ElapsedTime = 0f;
     public static string MapName = "Testplate";
 

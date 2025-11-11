@@ -18,7 +18,7 @@ public class CameraController3D(Camera3D camera)
         Camera.Pitch += mouseDelta.Y * Sensitivity;
         Camera.Yaw += mouseDelta.X * Sensitivity;
 
-        Camera.Pitch = Utils.Clamp(Camera.Pitch, MinPitch, MaxPitch);
+        Camera.Pitch = Math.Clamp(Camera.Pitch, MinPitch, MaxPitch);
 
         Camera.Rotation = new Vector3(Utils.Deg2Rad * Camera.Pitch, Utils.Deg2Rad * Camera.Yaw, 0);
         if (Core.CurrentPlayer != null)

@@ -46,6 +46,8 @@ public static class Core
 
     public static Player? CurrentPlayer;
 
+    public static float FrameTime;
+
     public static OpenTK.Mathematics.Vector2i WindowSize
     {
         get => Window.Size;
@@ -138,13 +140,9 @@ public static class Core
         AssetManager = new(loaders);
 
         Object2DRenderer.RectMesh = new Mesh2D([
-            // Top Left
             new Mesh2D.Vertex(new Vector2(-1.0f,1.0f), new Vector2(0.0f, 1.0f)),
-            // Top Right
             new Mesh2D.Vertex(new Vector2(1.0f,1.0f), new Vector2(1.0f, 1.0f)),
-            // Bottom Left
             new Mesh2D.Vertex(new Vector2(-1.0f,-1.0f), new Vector2(0.0f, 0.0f)),
-            // Bottom Right
             new Mesh2D.Vertex(new Vector2(1.0f,-1.0f), new Vector2(1.0f, 0.0f)),
         ], [
             0, 1, 3,
@@ -190,6 +188,7 @@ public static class Core
     {
         var dt = (float)e.Time;
 
+        FrameTime = dt;
         ElapsedTime += dt;
 
         CurrentCamera.Aspect = (float)Window.Size.X / Window.Size.Y;

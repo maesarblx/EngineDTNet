@@ -74,9 +74,9 @@ public class GameObject : IDisposable
             return;
         }
         var boxSize = Mesh.GetBoundingSize();
-        var boxShape = new Box(boxSize.X, boxSize.Y, boxSize.Z);
-        var boxInertia = boxShape.ComputeInertia(Mass);
-        var shapeHandle = Core.CurrentScene.Simulation.Shapes.Add(boxShape);
+        var collideShape = new Box(boxSize.X, boxSize.Y, boxSize.Z);
+        var boxInertia = collideShape.ComputeInertia(Mass);
+        var shapeHandle = Core.CurrentScene.Simulation.Shapes.Add(collideShape);
         var bodyDescription = BodyDescription.CreateDynamic(Position, boxInertia, shapeHandle, 0.01f);
 
         if (PhysicsEnabled)

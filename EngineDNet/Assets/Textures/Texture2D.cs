@@ -25,15 +25,15 @@ public class Texture2D
             return;
         }
 
-        using var image = Image.Load<Rgba32>(path);
+        using Image<Rgba32> image = Image.Load<Rgba32>(path);
 
         Width = image.Width;
         Height = image.Height;
 
-        var pixelArray = new Rgba32[Width * Height];
+        Rgba32[]? pixelArray = new Rgba32[Width * Height];
         image.CopyPixelDataTo(pixelArray);
 
-        var byteSpan = MemoryMarshal.AsBytes(pixelArray.AsSpan());
+        Span<byte> byteSpan = MemoryMarshal.AsBytes(pixelArray.AsSpan());
 
         _textureId = GL.GenTexture();
         GL.BindTexture(TextureTarget.Texture2D, _textureId);
@@ -57,7 +57,7 @@ public class Texture2D
     public static Texture2D Load(string path)
     {
         if (_cachedTextures.ContainsKey(path)) return _cachedTextures[path];
-        var texture = new Texture2D(path);
+        Texture2D texture = new(path);
         _cachedTextures[path] = texture;
         return texture;
     }

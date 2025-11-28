@@ -25,7 +25,7 @@ public class Mesh3D
     public static Mesh3D Load(List<float> Vertices)
     {
         if (_cachedMeshes.ContainsKey(Vertices)) return _cachedMeshes[Vertices];
-        var mesh = new Mesh3D(Vertices);
+        Mesh3D mesh = new(Vertices);
         _cachedMeshes[Vertices] = mesh;
         return mesh;
     }
@@ -52,7 +52,7 @@ public class Mesh3D
 
     public float CalculateMass()
     {
-        var size = GetBoundingSize();
+        Vector3 size = GetBoundingSize();
         return (size.X + size.Y + size.Z) / 3 * size.LengthSquared() * 0.35f;
     }
 

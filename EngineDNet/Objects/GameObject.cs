@@ -73,11 +73,11 @@ public class GameObject : IDisposable
             Utils.ColoredWriteLine($"[GameObject] Cannot initialize physics for {Name} because it has no mesh!", ConsoleColor.Yellow);
             return;
         }
-        var boxSize = Mesh.GetBoundingSize();
-        var collideShape = new Box(boxSize.X, boxSize.Y, boxSize.Z);
-        var boxInertia = collideShape.ComputeInertia(Mass);
-        var shapeHandle = Core.CurrentScene.Simulation.Shapes.Add(collideShape);
-        var bodyDescription = BodyDescription.CreateDynamic(Position, boxInertia, shapeHandle, 0.01f);
+        Vector3 boxSize = Mesh.GetBoundingSize();
+        Box collideShape = new(boxSize.X, boxSize.Y, boxSize.Z);
+        BodyInertia boxInertia = collideShape.ComputeInertia(Mass);
+        TypedIndex shapeHandle = Core.CurrentScene.Simulation.Shapes.Add(collideShape);
+        BodyDescription bodyDescription = BodyDescription.CreateDynamic(Position, boxInertia, shapeHandle, 0.01f);
 
         if (PhysicsEnabled)
         {

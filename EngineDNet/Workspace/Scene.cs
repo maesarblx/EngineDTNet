@@ -42,8 +42,8 @@ public struct SimplePoseIntegratorCallbacks : IPoseIntegratorCallbacks
 
     public void PrepareForIntegration(float dt)
     {
-        linearDampingDt = new Vector<float>(MathF.Pow(MathHelper.Clamp(1 - LinearDamping, 0, 1), dt));
-        angularDampingDt = new Vector<float>(MathF.Pow(MathHelper.Clamp(1 - AngularDamping, 0, 1), dt));
+        linearDampingDt = new(MathF.Pow(MathHelper.Clamp(1 - LinearDamping, 0, 1), dt));
+        angularDampingDt = new(MathF.Pow(MathHelper.Clamp(1 - AngularDamping, 0, 1), dt));
         gravityWideDt = Vector3Wide.Broadcast(Gravity * dt);
     }
 
@@ -206,18 +206,18 @@ public class Scene
         ApplyWindForces(deltaTime);
         Simulation.Timestep(deltaTime, ThreadDispatcher);
 
-        foreach (var obj in Root.Children)
+        foreach (GameObject v in Root.Children)
         {
-            if (obj.PhysicsEnabled && obj.PhysicsHandle != null)
+            if (v.PhysicsEnabled && v.PhysicsHandle != null)
             {
-                var bodyHandle = obj.PhysicsHandle.GetValueOrDefault();
-                var bodyRef = Simulation.Bodies.GetBodyReference(bodyHandle);
+                BodyHandle bodyHandle = v.PhysicsHandle.GetValueOrDefault();
+                BodyReference bodyRef = Simulation.Bodies.GetBodyReference(bodyHandle);
 
-                var pos = bodyRef.Pose.Position;
-                var rot = bodyRef.Pose.Orientation;
+                Vector3 pos = bodyRef.Pose.Position;
+                Quaternion rot = bodyRef.Pose.Orientation;
 
-                obj.Position = new Vector3(pos.X, pos.Y, pos.Z);
-                obj.Rotation = new Vector3(rot.X, rot.Y, rot.Z);
+                v.Position = new Vector3(pos.X, pos.Y, pos.Z);
+                v.Rotation = new Vector3(rot.X, rot.Y, rot.Z);
             }
         }
     }
@@ -236,15 +236,15 @@ public class Scene
         Vector3 baseWindDir = Wind == Vector3.Zero ? Vector3.UnitX : Vector3.Normalize(Wind);
         Vector3 windWithGust = Wind + baseWindDir * (gustAmplitude * MathF.Sin(time * MathF.PI * 2f * gustFrequency));
 
-        foreach (var obj in Root.Children)
+        foreach (GameObject v in Root.Children)
         {
-            if (!(obj.PhysicsEnabled && obj.PhysicsHandle != null))
+            if (!(v.PhysicsEnabled && v.PhysicsHandle != null))
                 continue;
 
-            var handle = obj.PhysicsHandle.GetValueOrDefault();
-            var bodyRef = Simulation.Bodies.GetBodyReference(handle);
+            BodyHandle bodyHandle = v.PhysicsHandle.GetValueOrDefault();
+            BodyReference bodyRef = Simulation.Bodies.GetBodyReference(bodyHandle);
 
-            var invMass = bodyRef.LocalInertia.InverseMass;
+            float invMass = bodyRef.LocalInertia.InverseMass;
             if (invMass <= 0f)
                 continue;
 
@@ -253,8 +253,8 @@ public class Scene
             if (speed <= minSpeedEpsilon)
                 continue;
 
-            float Cd = (obj is GameObject a && a.DragCoefficient > 0) ? a.DragCoefficient : defaultCd;
-            float area = (obj is GameObject b && b.CrossSectionalArea > 0) ? b.CrossSectionalArea : defaultArea;
+            float Cd = (v is GameObject a && a.DragCoefficient > 0) ? a.DragCoefficient : defaultCd;
+            float area = (v is GameObject b && b.CrossSectionalArea > 0) ? b.CrossSectionalArea : defaultArea;
 
             Vector3 dragForce = -0.5f * airDensity * Cd * area * speed * vRel;
 

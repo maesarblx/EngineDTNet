@@ -13,13 +13,13 @@ public class Object2DRenderer : IRenderer2D
     public static Shader? TextShader;
     public static void Render(Object2DMesh objectMesh2d, Shader shader, int screenWidth, int screenHeight)
     {
-        var mesh2d = objectMesh2d.Mesh2D;
+        Mesh2D? mesh2d = objectMesh2d.Mesh2D;
         shader.Use();
         GL.Disable(EnableCap.DepthTest);
         GL.Disable(EnableCap.CullFace);
-        var projection = Matrix4x4.CreateOrthographicOffCenter(0.0f, screenWidth, screenHeight, 0.0f, -1.0f, 1.0f);
-        var size = objectMesh2d.Size;
-        var model = Matrix4x4.CreateScale(new Vector3(size.X, size.Y, 1.0f))
+        Matrix4x4 projection = Matrix4x4.CreateOrthographicOffCenter(0.0f, screenWidth, screenHeight, 0.0f, -1.0f, 1.0f);
+        Vector2 size = objectMesh2d.Size;
+        Matrix4x4 model = Matrix4x4.CreateScale(new Vector3(size.X, size.Y, 1.0f))
                     * Matrix4x4.CreateRotationZ(Utils.DegToRad * objectMesh2d.Rotation)
                     * Matrix4x4.CreateTranslation(Vector3.UnitX * objectMesh2d.Position.X + Vector3.UnitY * objectMesh2d.Position.Y);
         shader.SetUniform("projection", projection);
@@ -51,7 +51,7 @@ public class Object2DRenderer : IRenderer2D
 
     public static void Render(Object2DMesh objectMesh2d, Shader shader, int textureID)
     {
-        var mesh2d = objectMesh2d.Mesh2D;
+        Mesh2D? mesh2d = objectMesh2d.Mesh2D;
         shader.Use();
         GL.Disable(EnableCap.DepthTest);
         GL.Disable(EnableCap.CullFace);

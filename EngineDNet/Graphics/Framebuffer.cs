@@ -39,7 +39,7 @@ public class Framebuffer : IDisposable
         GL.RenderbufferStorage(RenderbufferTarget.Renderbuffer, RenderbufferStorage.Depth24Stencil8, width, height);
         GL.FramebufferRenderbuffer(FramebufferTarget.Framebuffer, FramebufferAttachment.DepthStencilAttachment, RenderbufferTarget.Renderbuffer, _rbo);
 
-        var status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
+        FramebufferErrorCode status = GL.CheckFramebufferStatus(FramebufferTarget.Framebuffer);
         if (status != FramebufferErrorCode.FramebufferComplete)
         {
             Console.WriteLine($"[Framebuffer] Incomplete framebuffer: {status}");

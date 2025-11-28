@@ -12,14 +12,14 @@ public class Shader: IDisposable
     public void Use() => GL.UseProgram(ProgramId);
     private static int CompileShader(ShaderType shaderType, string source)
     {
-        var shader = GL.CreateShader(shaderType);
+        int shader = GL.CreateShader(shaderType);
         GL.ShaderSource(shader, source);
         GL.CompileShader(shader);
         
-        GL.GetShader(shader, ShaderParameter.CompileStatus, out var success);
+        GL.GetShader(shader, ShaderParameter.CompileStatus, out int success);
         
         if (success != 0) return shader;
-        GL.GetShaderInfoLog(shader, out var info);
+        GL.GetShaderInfoLog(shader, out string info);
         GL.DeleteShader(shader);
         throw new Exception($"Failed to compile shader: {info}");
     }

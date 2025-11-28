@@ -26,10 +26,10 @@ public class FontMesh
     private static float SignedArea(IList<Vector2> r)
     {
         float a = 0;
-        for (var k = 0; k < r.Count; k++)
+        for (int k = 0; k < r.Count; k++)
         {
-            var p1 = r[k];
-            var p2 = r[(k + 1) % r.Count];
+            Vector2 p1 = r[k];
+            Vector2 p2 = r[(k + 1) % r.Count];
             a += p1.X * p2.Y - p2.X * p1.Y;
         }
 
@@ -37,11 +37,11 @@ public class FontMesh
     }
     private static bool PointInPolygon(Vector2 pt, List<Vector2> poly)
     {
-        var inside = false;
+        bool inside = false;
         for (int a = 0, b = poly.Count - 1; a < poly.Count; b = a++)
         {
-            var pa = poly[a];
-            var pb = poly[b];
+            Vector2 pa = poly[a];
+            Vector2 pb = poly[b];
             if (pa.Y > pt.Y != pb.Y > pt.Y &&
                 pt.X < (pb.X - pa.X) * (pt.Y - pa.Y) / (pb.Y - pa.Y + 0.0f) + pa.X)
             {
@@ -52,25 +52,25 @@ public class FontMesh
     }
     public FontMesh(string path)
     {
-        var family = _collection.Add(path);
+        FontFamily family = _collection.Add(path);
 
         const float pointSize = 1f;
         const float dpi = 256f;
 
-        var font = family.CreateFont(pointSize, FontStyle.Regular);
-        var options = new TextOptions(font) { Dpi = dpi };
-        var glyphPaths = TextBuilder.GenerateGlyphs(TextGlyphs, options);
+        Font font = family.CreateFont(pointSize, FontStyle.Regular);
+        TextOptions options = new(font) { Dpi = dpi };
+        IPathCollection glyphPaths = TextBuilder.GenerateGlyphs(TextGlyphs, options);
 
-        var i = 0;
-        foreach (var glyphPath in glyphPaths)
+        int i = 0;
+        foreach (IPath glyphPath in glyphPaths)
         {
-            var rings = new List<List<Vector2>>();
+            List<List<Vector2>> rings = new();
             foreach (var simple in glyphPath.Flatten())
             {
-                var ring = new List<Vector2>();
-                foreach (var p in simple.Points.Span)
+                List<Vector2> ring = new();
+                foreach (Vector2 p in simple.Points.Span)
                 {
-                    ring.Add(new Vector2(p.X, p.Y));
+                    ring.Add(p);
                 }
                 if (ring.Count > 1 && ring[0] == ring[^1])
                     ring.RemoveAt(ring.Count - 1);
@@ -79,19 +79,19 @@ public class FontMesh
 
             if (rings.Count == 0) { i++; continue; }
 
-            var parent = new int[rings.Count];
-            for (var idx = 0; idx < parent.Length; idx++) parent[idx] = -1;
+            int[] parent = new int[rings.Count];
+            for (int idx = 0; idx < parent.Length; idx++) parent[idx] = -1;
 
-            for (var a = 0; a < rings.Count; a++)
+            for (int a = 0; a < rings.Count; a++)
             {
-                var testPt = rings[a][0];
-                var bestParent = -1;
-                var bestParentArea = float.MaxValue;
-                for (var b = 0; b < rings.Count; b++)
+                Vector2 testPt = rings[a][0];
+                int bestParent = -1;
+                float bestParentArea = float.MaxValue;
+                for (int b = 0; b < rings.Count; b++)
                 {
                     if (a == b) continue;
                     if (!PointInPolygon(testPt, rings[b])) continue;
-                    var areaAbs = MathF.Abs(SignedArea(rings[b]));
+                    float areaAbs = MathF.Abs(SignedArea(rings[b]));
                     if (!(areaAbs < bestParentArea)) continue;
                     bestParentArea = areaAbs;
                     bestParent = b;
@@ -99,58 +99,58 @@ public class FontMesh
                 parent[a] = bestParent;
             }
 
-            var outers = new List<int>();
-            var holesOf = new Dictionary<int, List<int>>();
-            for (var r = 0; r < rings.Count; r++)
+            List<int> outers = new();
+            Dictionary<int, List<int>> holesOf = new();
+            for (int r = 0; r < rings.Count; r++)
             {
                 if (parent[r] != -1) continue;
                 outers.Add(r);
                 holesOf[r] = [];
             }
-            for (var r = 0; r < rings.Count; r++)
+            for (int r = 0; r < rings.Count; r++)
             {
                 if (parent[r] == -1) continue;
-                var p = parent[r];
+                int p = parent[r];
                 while (p != -1 && parent[p] != -1) p = parent[p];
-                if (p != -1 && holesOf.TryGetValue(p, out var value))
+                if (p != -1 && holesOf.TryGetValue(p, out List<int>? value))
                     value.Add(r);
                 else
                 {
                     outers.Add(r);
-                    holesOf[r] = new List<int>();
+                    holesOf[r] = new();
                 }
             }
 
-            foreach (var o in outers)
+            foreach (int o in outers)
             {
                 if (SignedArea(rings[o]) < 0) rings[o].Reverse();
-                foreach (var h in holesOf[o].Where(h => SignedArea(rings[h]) > 0))
+                foreach (int h in holesOf[o].Where(h => SignedArea(rings[h]) > 0))
                 {
                     rings[h].Reverse();
                 }
             }
 
-            var globalVertices = new List<float>();
-            var globalIndices = new List<int>();
-            var globalVertexOffset = 0;
+            List<float> globalVertices = new();
+            List<int> globalIndices = new();
+            int globalVertexOffset = 0;
 
-            foreach (var outerIdx in outers)
+            foreach (int outerIdx in outers)
             {
-                var groupVertices = new List<float>();
-                var groupHoleIndices = new List<int>();
-                var localCount = 0;
+                List<float> groupVertices = new();
+                List<int> groupHoleIndices = new();
+                int localCount = 0;
 
-                foreach (var p in rings[outerIdx])
+                foreach (Vector2 p in rings[outerIdx])
                 {
                     groupVertices.Add(p.X);
                     groupVertices.Add(p.Y);
                     localCount++;
                 }
 
-                foreach (var holeIdx in holesOf[outerIdx])
+                foreach (int holeIdx in holesOf[outerIdx])
                 {
                     groupHoleIndices.Add(localCount);
-                    foreach (var p in rings[holeIdx])
+                    foreach (Vector2 p in rings[holeIdx])
                     {
                         groupVertices.Add(p.X);
                         groupVertices.Add(p.Y);
@@ -160,7 +160,7 @@ public class FontMesh
 
                 if (groupVertices.Count == 0) continue;
 
-                var groupIndices = groupHoleIndices.Count > 0
+                int[]? groupIndices = groupHoleIndices.Count > 0
                     ? EarCut.Tessellate(groupVertices.ToArray(), groupHoleIndices.ToArray()).ToArray()
                     : EarCut.Tessellate(groupVertices.ToArray()).ToArray();
 
@@ -176,13 +176,13 @@ public class FontMesh
                 continue;
             }
 
-            var ptsCount = globalVertices.Count / 2;
-            var pts = new Vector2[ptsCount];
-            for (var vi = 0; vi < ptsCount; vi++)
+            int ptsCount = globalVertices.Count / 2;
+            Vector2[] pts = new Vector2[ptsCount];
+            for (int vi = 0; vi < ptsCount; vi++)
                 pts[vi] = new Vector2(globalVertices[vi * 2], globalVertices[vi * 2 + 1]);
 
             float minX = float.MaxValue, minY = float.MaxValue, maxX = float.MinValue, maxY = float.MinValue;
-            foreach (var p in pts)
+            foreach (Vector2 p in pts)
             {
                 if (p.X < minX) minX = p.X;
                 if (p.Y < minY) minY = p.Y;
@@ -190,20 +190,20 @@ public class FontMesh
                 if (p.Y > maxY) maxY = p.Y;
             }
 
-            var cp = new CodePoint(TextGlyphs[i]);
-            if (!font.TryGetGlyphs(cp, out var glyphs) || glyphs.Count == 0) { i++; continue; }
-            var glyph = glyphs[0];
-            var gm = glyph.GlyphMetrics;
+            CodePoint cp = new(TextGlyphs[i]);
+            if (!font.TryGetGlyphs(cp, out IReadOnlyList<Glyph>? glyphs) || glyphs.Count == 0) { i++; continue; }
+            Glyph glyph = glyphs[0];
+            GlyphMetrics gm = glyph.GlyphMetrics;
             float unitsPerEm = gm.UnitsPerEm;
             const float pixelsPerEm = pointSize * dpi / 72f;
-            var scale = pixelsPerEm / unitsPerEm;
-            var widthPx = gm.Width * scale;
-            var heightPx = gm.Height * scale;
-            var leftPx = gm.LeftSideBearing * scale;
-            var topPx = gm.TopSideBearing * scale;
-            var advancePx = gm.AdvanceWidth * scale;
+            float scale = pixelsPerEm / unitsPerEm;
+            float widthPx = gm.Width * scale;
+            float heightPx = gm.Height * scale;
+            float leftPx = gm.LeftSideBearing * scale;
+            float topPx = gm.TopSideBearing * scale;
+            float advancePx = gm.AdvanceWidth * scale;
 
-            var meshVertices = new Mesh2D.Vertex[pts.Length];
+            Mesh2D.Vertex[] meshVertices = new Mesh2D.Vertex[pts.Length];
             for (var vi = 0; vi < pts.Length; vi++)
             {
                 var x = pts[vi].X - minX;
@@ -211,7 +211,7 @@ public class FontMesh
                 meshVertices[vi] = new Mesh2D.Vertex(new Vector2(x, y), new Vector2(x, y));
             }
 
-            var glyphMesh = new Mesh2D(meshVertices, globalIndices.ToArray());
+            Mesh2D glyphMesh = new(meshVertices, globalIndices.ToArray());
             Glyphs[TextGlyphs[i]] = new GlyphMesh(glyphMesh, TextGlyphs[i], widthPx, heightPx, leftPx, topPx, advancePx);
             i++;
         }

@@ -6,11 +6,11 @@ public class MeshLoader : IAssetLoader
 {
     public List<float> Load(string filePath)
     {
-        var tempPositions = new List<Vector3>();
-        var tempTexCoords = new List<Vector2>();
-        var tempNormals = new List<Vector3>();
+        List<Vector3> tempPositions = new();
+        List<Vector2> tempTexCoords = new();
+        List<Vector3> tempNormals = new();
 
-        var finalVertices = new List<float>();
+        List<float> finalVertices = new();
 
         try
         {

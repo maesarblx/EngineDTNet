@@ -33,13 +33,13 @@ public class Camera3D()
 
     public Vector3 GetFrontVector()
     {
-        var yawRad = Utils.Deg2Rad * Yaw;
+        float yawRad = Utils.Deg2Rad * Yaw;
         return new Vector3((float)-Math.Sin(yawRad), 0, (float)Math.Cos(yawRad));
     }
 
     public Vector3 GetRightVector()
     {
-        var yawRad = Utils.Deg2Rad * (Yaw + 90);
+        float yawRad = Utils.Deg2Rad * (Yaw + 90);
         return new Vector3((float)-Math.Sin(yawRad), 0, (float)Math.Cos(yawRad));
     }
 
@@ -50,7 +50,7 @@ public class Camera3D()
 
         pitchRad = Math.Clamp(pitchRad, -MathF.PI / 2f + 0.001f, MathF.PI / 2f - 0.001f);
 
-        Vector3 front = new Vector3(
+        Vector3 front = new(
             -MathF.Sin(yawRad) * MathF.Cos(pitchRad),
              MathF.Sin(pitchRad),
              MathF.Cos(yawRad) * MathF.Cos(pitchRad)

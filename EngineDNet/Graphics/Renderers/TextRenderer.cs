@@ -1,4 +1,5 @@
-﻿using EngineDNet.Assets.Meshes;
+﻿using BepuPhysics.Collidables;
+using EngineDNet.Assets.Meshes;
 using EngineDNet.Rendering;
 using OpenTK.Graphics.OpenGL4;
 using System.Numerics;
@@ -9,8 +10,8 @@ public static class TextRenderer
 {
     public static void Render(string text, FontMesh fontMesh, Shader shader, Matrix4x4 baseMatrix, float fontSize, Vector3 color)
     {
-        var model = Matrix4x4.Identity;
-        var offset = Vector3.Zero;
+        Matrix4x4 model = Matrix4x4.Identity;
+        Vector3 offset = Vector3.Zero;
         foreach (var t in text)
         {
             switch (t)
@@ -26,7 +27,7 @@ public static class TextRenderer
             }
 
             if (!fontMesh.Glyphs.TryGetValue(t, out var character)) continue;
-            var mesh = character.Mesh;
+            Mesh2D? mesh = character.Mesh;
             if (mesh == null) continue;
             shader.Use();
             shader.SetUniform("color", color);

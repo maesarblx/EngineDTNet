@@ -37,44 +37,44 @@ public class Player
 
     public Player()
     {
-        var capsule = new Capsule(Radius, Height - 2 * Radius);
-        var shape = Core.CurrentScene.Simulation.Shapes.Add(capsule);
-        var inertia = capsule.ComputeInertia(_mass);
-        
-        var bodyDesc = BodyDescription.CreateDynamic(new RigidPose(Position), inertia, shape, new BodyActivityDescription(0.01f));
+        Capsule capsule = new(Radius, Height - 2 * Radius);
+        TypedIndex shape = Core.CurrentScene.Simulation.Shapes.Add(capsule);
+        BodyInertia inertia = capsule.ComputeInertia(_mass);
+
+        BodyDescription bodyDesc = BodyDescription.CreateDynamic(new RigidPose(Position), inertia, shape, new BodyActivityDescription(0.01f));
         bodyHandle = Core.CurrentScene.Simulation.Bodies.Add(bodyDesc);
         GroundHitHandler.DIgnored.Add(bodyHandle);
     }
 
     public void ProcessInput(float dt)
     {
-        var targetMoveLocal = Vector3.Zero;
-        var targetMoveWorld = Vector3.Zero;
+        Vector3 targetMoveLocal = Vector3.Zero;
+        Vector3 targetMoveWorld = Vector3.Zero;
         if (Core.IsKeyDown(Keys.W))
         {
-            var l = -Vector3.UnitZ;
-            var w = -Core.CurrentCamera.GetFrontVector() * Utils.FlatXZ;
+            Vector3 l = -Vector3.UnitZ;
+            Vector3 w = -Core.CurrentCamera.GetFrontVector() * Utils.FlatXZ;
             targetMoveLocal += l;
             targetMoveWorld += w;
         }
         if (Core.IsKeyDown(Keys.S))
         {
-            var l = Vector3.UnitZ;
-            var w = Core.CurrentCamera.GetFrontVector() * Utils.FlatXZ;
+            Vector3 l = Vector3.UnitZ;
+            Vector3 w = Core.CurrentCamera.GetFrontVector() * Utils.FlatXZ;
             targetMoveLocal += l;
             targetMoveWorld += w;
         }
         if (Core.IsKeyDown(Keys.D))
         {
-            var l = -Vector3.UnitX;
-            var w = -Core.CurrentCamera.GetRightVector() * Utils.FlatXZ;
+            Vector3 l = -Vector3.UnitX;
+            Vector3 w = -Core.CurrentCamera.GetRightVector() * Utils.FlatXZ;
             targetMoveLocal += l;
             targetMoveWorld += w;
         }
         if (Core.IsKeyDown(Keys.A))
         {
-            var l = Vector3.UnitX;
-            var w = Core.CurrentCamera.GetRightVector() * Utils.FlatXZ;
+            Vector3 l = Vector3.UnitX;
+            Vector3 w = Core.CurrentCamera.GetRightVector() * Utils.FlatXZ;
             targetMoveLocal += l;
             targetMoveWorld += w;
         }
@@ -102,29 +102,29 @@ public class Player
 
     public void FixedUpdate(float dt)
     {
-        var bodyRef = Core.CurrentScene.Simulation.Bodies.GetBodyReference(bodyHandle);
+        BodyReference bodyRef = Core.CurrentScene.Simulation.Bodies.GetBodyReference(bodyHandle);
 
-        var pos = bodyRef.Pose.Position;
+        Vector3 pos = bodyRef.Pose.Position;
 
         GroundHitHandler.Reset();
 
-        var halfHeight = Height * 0.5f;
-        var groundCheckMargin = 0.12f;
-        var rayLength = halfHeight + groundCheckMargin;
+        float halfHeight = Height * 0.5f;
+        float groundCheckMargin = 0.12f;
+        float rayLength = halfHeight + groundCheckMargin;
 
         Core.CurrentScene.Simulation.RayCast(pos, -Vector3.UnitY, rayLength, ref GroundHitHandler);
 
         _grounded = GroundHitHandler.Hit && Vector3.Dot(GroundHitHandler.Normal, Vector3.UnitY) > 0.7f;
 
-        var vel = bodyRef.Velocity.Linear;
-        var velXZ = new Vector3(vel.X, 0f, vel.Z);
-        var desiredXZ = WorldMoveDirection * MoveSpeed;
+        Vector3 vel = bodyRef.Velocity.Linear;
+        Vector3 velXZ = new(vel.X, 0f, vel.Z);
+        Vector3 desiredXZ = WorldMoveDirection * MoveSpeed;
 
-        var accel = _grounded ? GroundAcceleration : AirAcceleration;
-        var maxDeltaThisFrame = accel * dt;
+        float accel = _grounded ? GroundAcceleration : AirAcceleration;
+        float maxDeltaThisFrame = accel * dt;
 
-        var deltaV = desiredXZ - velXZ;
-        var deltaLen = deltaV.Length();
+        Vector3 deltaV = desiredXZ - velXZ;
+        float deltaLen = deltaV.Length();
         if (deltaLen > 0f)
         {
             if (deltaLen > maxDeltaThisFrame)
@@ -140,16 +140,16 @@ public class Player
             vel.Z = 0f;
         }
 
-        var speedXZ = new Vector3(vel.X, 0f, vel.Z).Length();
+        float speedXZ = new Vector3(vel.X, 0f, vel.Z).Length();
         if (speedXZ > MaxSpeed)
         {
-            var norm = Vector3.Normalize(new Vector3(vel.X, 0f, vel.Z));
+            Vector3 norm = Vector3.Normalize(new Vector3(vel.X, 0f, vel.Z));
             vel.X = norm.X * MaxSpeed;
             vel.Z = norm.Z * MaxSpeed;
         }
 
 
-        var wantJump = Core.IsKeyDown(Keys.Space);
+        bool wantJump = Core.IsKeyDown(Keys.Space);
         if (wantJump && _grounded)
         {
             vel.Y += JumpSpeed * 0.01f;

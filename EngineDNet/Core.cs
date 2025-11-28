@@ -3,6 +3,7 @@ using EngineDNet.Assets.Loaders;
 using EngineDNet.Assets.Meshes;
 using EngineDNet.Assets.Textures;
 using EngineDNet.Camera;
+using EngineDNet.Graphics;
 using EngineDNet.Graphics.Renderers;
 using EngineDNet.Objects;
 using EngineDNet.Rendering;
@@ -28,6 +29,7 @@ public static class Core
     private static Camera3D _camera = null!;
     private static CameraController3D _cameraController = null!;
     private static Scene _curScene = null!;
+    private static ShadowMap _shadowMap = null!;
 
     private static Framebuffer _fbuffer = null!;
     private static Rect2D _screenRect = null!;
@@ -47,6 +49,8 @@ public static class Core
     public static Player? CurrentPlayer;
 
     public static float FrameTime;
+
+    private static Matrix4x4 _lightSpaceMatrix = Matrix4x4.Identity;
 
     public static OpenTK.Mathematics.Vector2i WindowSize
     {
@@ -97,13 +101,32 @@ public static class Core
         return Window.IsKeyPressed(Key);
     }
 
-    private static void render3D()
+    private static void Render3D()
     {
         if (CurrentScene.Skybox != null)
             GameObjectRenderer.Render(CurrentScene.Skybox.Object, _shaders["Main3D"], _camera, CurrentScene.SceneLightingSettings);
         foreach (var v in CurrentScene.Root.Children)
         {
             GameObjectRenderer.Render(v, _shaders["Main3D"], _camera, CurrentScene.SceneLightingSettings);
+        }
+    }
+
+    private static void Render3DShadowMap()
+    {
+        var shader = _shaders["ShadowMap"];
+        shader.Use();
+        var nearZPlane = 1f;
+        var farZPlane = 7.5f;
+        var lightProjection = Matrix4x4.CreateOrthographicOffCenter(-10, 10, -10, 10, nearZPlane, farZPlane);
+        var lightView = Matrix4x4.CreateLookAt(new Vector3(-2.0f, 4.0f, -1.0f), Vector3.Zero, Vector3.UnitY);
+        var lightSpaceMatrix = lightProjection * lightView;
+
+        _lightSpaceMatrix = lightSpaceMatrix;
+
+        shader.SetUniform("lightSpaceMatrix", lightSpaceMatrix);
+        foreach (var v in CurrentScene.Root.Children)
+        {
+            GameObjectRenderer.BasicRender(v, shader);
         }
     }
 
@@ -121,6 +144,7 @@ public static class Core
         _shaders = new()
         {
             ["Main3D"] = new(File.ReadAllText($"{ShaderPaths["3D"]}/main.dsv"), File.ReadAllText($"{ShaderPaths["3D"]}/main.dsf")),
+            ["ShadowMap"] = new(File.ReadAllText($"{ShaderPaths["3D"]}/shadowmap.dsv"), File.ReadAllText($"{ShaderPaths["3D"]}/shadowmap.dsf")),
             ["Text"] = new(File.ReadAllText($"{ShaderPaths["2D"]}/text.dsv"), File.ReadAllText($"{ShaderPaths["2D"]}/text.dsf")),
             ["PostFX"] = new(File.ReadAllText($"{ShaderPaths["SH"]}/postfx.dsv"), File.ReadAllText($"{ShaderPaths["SH"]}/postfx.dsf")),
         };
@@ -138,6 +162,8 @@ public static class Core
 
         var loaders = new IAssetLoader[] { new MeshLoader(), new MapLoader() };
         AssetManager = new(loaders);
+
+        _shadowMap = new(Render3DShadowMap);
 
         Object2DRenderer.RectMesh = new Mesh2D([
             new Mesh2D.Vertex(new Vector2(-1.0f,1.0f), new Vector2(0.0f, 1.0f)),
@@ -186,7 +212,7 @@ public static class Core
 
     private static void WindowOnRenderFrame(FrameEventArgs e)
     {
-        var dt = (float)e.Time;
+        float dt = (float)e.Time;
 
         FrameTime = dt;
         ElapsedTime += dt;
@@ -202,10 +228,14 @@ public static class Core
             CurrentScene.RenderUpdate(_cameraController.Camera);
 
         GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+
         CurrentScene.Update(dt);
-        _fbuffer.Draw(render3D, Window.ClientSize.X, Window.ClientSize.Y);
+
+        _fbuffer.Draw(Render3D, Window.ClientSize.X, Window.ClientSize.Y);
+
         Object2DRenderer.Render(_screenRect, _shaders["PostFX"], _fbuffer.TextureID);
         Object2DRenderer.Render(_fpsText, _shaders["Text"], Window.ClientSize.X, Window.ClientSize.Y);
+
         Window.SwapBuffers();
     }
 

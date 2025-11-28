@@ -23,7 +23,7 @@ public class Spring
             return;
         }
         Position += Velocity * Core.FrameTime;
-        var damping = 1 - (Damping * Core.FrameTime);
+        float damping = 1 - (Damping * Core.FrameTime);
         if (damping < 0)
             damping = 0;
         Velocity *= damping;

@@ -2,6 +2,7 @@
 using OpenTK.Windowing.Common;
 using System.Drawing;
 using System.Windows.Forms;
+using EngineDNet.Assets;
 
 namespace EngineDNet;
 public class Bootstraper
@@ -16,11 +17,21 @@ public class Bootstraper
         Core.Title = "EngineDNet";
         Core.VSync = VSyncMode.Off;
 
-        Core.ShaderPaths = new Dictionary<string, string>() 
+        Core.ShaderSources = new()
         {
-            ["3D"] = "shaders/3d",
-            ["2D"] = "shaders/2d",
-            ["SH"] = "shaders/sh",
+            ["3D"] = new()
+            {
+                ["Main"] = new() { EmbeddedShaderLoader.LoadShaderByRelativePath("3D/main.dsf"), EmbeddedShaderLoader.LoadShaderByRelativePath("3D/main.dsv") },
+                ["ShadowMap"] = new() { EmbeddedShaderLoader.LoadShaderByRelativePath("3D/shadowmap.dsf"), EmbeddedShaderLoader.LoadShaderByRelativePath("3D/shadowmap.dsv") },
+            },
+            ["2D"] = new()
+            {
+                ["Text"] = new() { EmbeddedShaderLoader.LoadShaderByRelativePath("2D/text.dsf"), EmbeddedShaderLoader.LoadShaderByRelativePath("2D/text.dsv") },
+            },
+            ["SH"] = new()
+            {
+                ["PostFX"] = new() { EmbeddedShaderLoader.LoadShaderByRelativePath("SH/postfx.dsf"), EmbeddedShaderLoader.LoadShaderByRelativePath("SH/postfx.dsv") },
+            },
         };
 
         if (args.Length > 0)

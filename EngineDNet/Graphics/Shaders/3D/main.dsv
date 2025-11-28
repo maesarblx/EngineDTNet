@@ -1,0 +1,20 @@
+#version 330
+
+layout(location = 0) in vec3 vertex;
+layout(location = 1) in vec2 texcoords;
+layout(location = 2) in vec3 normal;
+
+uniform mat4 ViewMatrix;
+uniform mat4 ProjMatrix;
+uniform mat4 Model;
+uniform float TexCoordsMult;
+uniform vec2 VecTexCoordsMult;
+
+out vec2 fragTexCoord;
+out vec3 fragNormal;
+
+void main() {
+    gl_Position = ProjMatrix * ViewMatrix * Model * vec4(vertex, 1);
+    fragTexCoord = texcoords * VecTexCoordsMult * TexCoordsMult;
+    fragNormal = normal;
+} 

@@ -44,7 +44,7 @@ public static class Core
 
     public static AssetManager AssetManager = null!;
 
-    public static Dictionary<string, string> ShaderPaths = null!;
+    public static Dictionary<string, Dictionary<string, List<string>>> ShaderSources = null!;
 
     public static Player? CurrentPlayer;
 
@@ -143,10 +143,10 @@ public static class Core
     {
         _shaders = new()
         {
-            ["Main3D"] = new(File.ReadAllText($"{ShaderPaths["3D"]}/main.dsv"), File.ReadAllText($"{ShaderPaths["3D"]}/main.dsf")),
-            ["ShadowMap"] = new(File.ReadAllText($"{ShaderPaths["3D"]}/shadowmap.dsv"), File.ReadAllText($"{ShaderPaths["3D"]}/shadowmap.dsf")),
-            ["Text"] = new(File.ReadAllText($"{ShaderPaths["2D"]}/text.dsv"), File.ReadAllText($"{ShaderPaths["2D"]}/text.dsf")),
-            ["PostFX"] = new(File.ReadAllText($"{ShaderPaths["SH"]}/postfx.dsv"), File.ReadAllText($"{ShaderPaths["SH"]}/postfx.dsf")),
+            ["Main3D"] = new(ShaderSources["3D"]["Main"][1], ShaderSources["3D"]["Main"][0]),
+            ["ShadowMap"] = new(ShaderSources["3D"]["ShadowMap"][1], ShaderSources["3D"]["ShadowMap"][0]),
+            ["Text"] = new(ShaderSources["2D"]["Text"][1], ShaderSources["2D"]["Text"][0]),
+            ["PostFX"] = new(ShaderSources["SH"]["PostFX"][1], ShaderSources["SH"]["PostFX"][0]),
         };
 
         _fbuffer = new();

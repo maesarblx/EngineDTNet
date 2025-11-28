@@ -1,33 +1,38 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <PlatformTarget>x64</PlatformTarget>
-    <PackageIcon>channels4_profile.jpg</PackageIcon>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
-  </PropertyGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <PlatformTarget>x64</PlatformTarget>
+        <PackageIcon>channels4_profile.jpg</PackageIcon>
+        <ApplicationIcon>icon.ico</ApplicationIcon>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="icon.ico" />
-  </ItemGroup>
+    <ItemGroup>
+        <Content Include="icon.ico" />
+    </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BepuPhysics" Version="2.4.0" />
-    <PackageReference Include="BepuUtilities" Version="2.4.0" />
-    <PackageReference Include="MadWorldNL.EarCut" Version="1.1.0" />
-    <PackageReference Include="OpenTK" Version="4.9.4" />
-    <PackageReference Include="ppy.SDL2-CS" Version="1.0.82" />
-    <PackageReference Include="SimplexNoise" Version="2.0.0" />
-    <PackageReference Include="SixLabors.Fonts" Version="2.1.3" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
-    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
-  </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="BepuPhysics" Version="2.4.0" />
+        <PackageReference Include="BepuUtilities" Version="2.4.0" />
+        <PackageReference Include="MadWorldNL.EarCut" Version="1.1.0" />
+        <PackageReference Include="OpenTK" Version="4.9.4" />
+        <PackageReference Include="ppy.SDL2-CS" Version="1.0.82" />
+        <PackageReference Include="SimplexNoise" Version="2.0.0" />
+        <PackageReference Include="SixLabors.Fonts" Version="2.1.3" />
+        <PackageReference Include="SixLabors.ImageSharp" Version="3.1.11" />
+        <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+    </ItemGroup>
+
+    <ItemGroup>
+	    <FrameworkReference Include="Microsoft.WindowsDesktop.App" />
+    </ItemGroup>
 
 	<ItemGroup>
-		<FrameworkReference Include="Microsoft.WindowsDesktop.App" />
-	</ItemGroup>
+      <EmbeddedResource Include="Graphics\Shaders\**\*.*" />
+    </ItemGroup>
+
 
 </Project>

@@ -1,0 +1,21 @@
+#version 330
+
+out vec4 outputcolor;
+
+in vec2 fragTexCoord;
+in vec3 fragNormal;
+
+uniform sampler2D tex;
+uniform vec3 lightDirection;
+uniform vec3 ambientColor;
+uniform float ambientIntensity;
+uniform int directionalLightEnabled;
+
+void main() {
+    outputcolor = texture2D(tex, fragTexCoord);
+    if (directionalLightEnabled == 1) {
+        float light = max(0.0, dot(normalize(fragNormal), -lightDirection));
+        outputcolor.rgb *= light;
+        outputcolor.rgb += ambientColor * ambientIntensity;
+    }
+}
